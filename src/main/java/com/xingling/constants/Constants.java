@@ -47,4 +47,15 @@ public class Constants {
      * 根菜单
      */
     public static final  String MENU_ROOT = "1";
+
+
+    /**
+     * 数据字典根节点
+     */
+    public static final  String DICTIONARY_ROOT = "root";
+
+    /**
+     * 根节点父编码
+     */
+    public static final  String ROOT_PARENTID = "-1";
 }
