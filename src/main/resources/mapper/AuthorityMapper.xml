@@ -44,7 +44,7 @@
         aa.*,bb.menu_name as menuName
         FROM
         xl_authority aa
-        LEFT JOIN xl_menu bb on aa.menu_id = bb.id
+        inner JOIN xl_menu bb on aa.menu_id = bb.id
         <if test="authorityName != null and authorityName != ''">
             AND aa.authority_name LIKE concat('%',#{authorityName},'%')
         </if>

@@ -37,7 +37,7 @@ public class DeptTreeVo extends TreeNode implements Serializable {
      * 父部门名称
      */
     @ApiModelProperty("父部门名称")
-    private String parentdeptName;
+    private String parentDeptName;
 
     /**
      * 序号

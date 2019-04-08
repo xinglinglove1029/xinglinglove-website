@@ -146,7 +146,7 @@ public class DictionaryController extends BaseController {
         String dicCode = checkDicCodeDto.getDicCode();
         Example example = new Example(Dictionary.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("DicCode", dicCode);
+        criteria.andEqualTo("code", dicCode);
         if (StringUtils.isNotEmpty(dicId)) {
             criteria.andNotEqualTo("id", dicId);
         }

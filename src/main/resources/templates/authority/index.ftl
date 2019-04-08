@@ -3,7 +3,7 @@
 <head>
     <#include "../common/head.ftl">
 </head>
-<style rel="stylesheet/scss" lang="scss">
+<style type="text/css">
 
 </style>
 <body>
@@ -36,7 +36,7 @@
 
         <el-table :data="tableData" v-loading.body="listLoading" element-loading-text="Loading" border fit highlight-current-row
                   :default-sort = "{prop: 'createTime', order: 'descending'}">
-            <el-table-column align="center" label='ID' width="95">
+            <el-table-column align="center" label='ID'>
                 <template slot-scope="scope">
                     {{scope.$index+1}}
                 </template>
@@ -56,7 +56,7 @@
                     <span>{{scope.row.authorityCode}}</span>
                 </template>
             </el-table-column>
-            <el-table-column class-name="status-col"  label="权限url" width="110" align="center" prop="url">
+            <el-table-column class-name="status-col"  label="权限url"  align="center" prop="url">
                 <template slot-scope="scope">
                     {{scope.row.url}}
                 </template>
@@ -66,18 +66,7 @@
                     <span>{{scope.row.status | statusFilter}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" sortable prop="creator" label="创建人" width="120">
-                <template slot-scope="scope">
-                    <span>{{scope.row.creator}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column align="center" sortable prop="createTime" label="创建时间" width="180">
-                <template slot-scope="scope">
-                    <i class="el-icon-time"></i>
-                    <span>{{scope.row.createTime}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column align="center" sortable prop="updater" label="修改人" width="120">
+            <el-table-column align="center"  prop="updater" label="修改人" width="120">
                 <template slot-scope="scope">
                     <span>{{scope.row.updater}}</span>
                 </template>

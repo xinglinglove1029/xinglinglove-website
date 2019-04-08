@@ -3,8 +3,7 @@
 <head>
     <#include "../common/head.ftl">
 </head>
-<style rel="stylesheet/scss" lang="scss">
-
+<style type="text/css">
 </style>
 <body>
 <div id="app">
@@ -32,39 +31,28 @@
 
         <el-table :data="tableData" v-loading.body="listLoading" element-loading-text="Loading" border fit highlight-current-row
                   :default-sort = "{prop: 'createTime', order: 'descending'}">
-            <el-table-column align="center" label='ID' width="95">
+            <el-table-column align="center" label='ID'>
                 <template slot-scope="scope">
                     {{scope.$index+1}}
                 </template>
             </el-table-column>
-            <el-table-column label="角色名" sortable align="center" prop="roleName">
+            <el-table-column label="角色名"  align="center" prop="roleName">
                 <template slot-scope="scope">
                     <span>{{scope.row.roleName}}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="角色编码" sortable  align="center" prop="roleCode">
+            <el-table-column label="角色编码"  align="center" prop="roleCode">
                 <template slot-scope="scope">
                     <el-tag v-if="scope.row.id === '1'" :type="scope.row.roleCode">{{scope.row.roleCode}}</el-tag>
                     <span v-else>{{scope.row.roleCode}}</span>
                 </template>
             </el-table-column>
-            <el-table-column class-name="status-col" sortable label="状态"  align="center" prop="status">
+            <el-table-column class-name="status-col" label="状态"  align="center" prop="status">
                 <template slot-scope="scope">
                     <span>{{scope.row.status | statusFilter}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" sortable prop="creator" label="创建人">
-                <template slot-scope="scope">
-                    <span>{{scope.row.creator}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column align="center" sortable prop="createTime" label="创建时间">
-                <template slot-scope="scope">
-                    <i class="el-icon-time"></i>
-                    <span>{{scope.row.createTime}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column align="center"sortable prop="updater" label="修改人">
+            <el-table-column align="center" prop="updater" label="修改人">
                 <template slot-scope="scope">
                     <span>{{scope.row.updater}}</span>
                 </template>

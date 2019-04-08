@@ -3,10 +3,10 @@
 <head>
     <#include "../common/head.ftl">
 </head>
-<style rel="stylesheet/scss" lang="scss">
- .filter-container{
-     margin: 30px 10px 30px 0;
- }
+<style type="text/css">
+   .filter-container{
+       margin: 30px 10px 30px 0;
+   }
 </style>
 <body>
 <div id="app">

@@ -4,6 +4,11 @@
     <#include "../common/head.ftl">
 </head>
 <style type="text/css">
+    body{
+        margin: 0;
+        padding: 0;
+        background-color:#ddd;
+    }
     .el-header {
         background-color: #002140;
         text-align: center;
@@ -324,10 +329,26 @@
         },
         mounted(){
             this.getLeftMenuList();
+            this.getCurrentUserInfo();
         },
         methods: {
             reLoad(){
                 window.location.reload();
+            },
+            getCurrentUserInfo(){
+                let _this = this;
+                _this.$http({
+                    method: 'POST',
+                    url: "/getCurrentUserInfo"
+                }).then(function (response) {
+                    console.log(response);
+                    _this.currentUserName = response.data.result.realName;
+                    _this.currentPhone = response.data.result.cellPhone;
+                    _this.currentEmail = response.data.result.email;
+
+                }).catch(function (response) {
+                    console.log(response);
+                });
             },
             getLeftMenuList() {
                 let _this = this;

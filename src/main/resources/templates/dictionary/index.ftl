@@ -3,7 +3,7 @@
 <head>
     <#include "../common/head.ftl">
 </head>
-<style rel="stylesheet/scss" lang="scss">
+<style type="text/css">
     .filter-container{
         margin: 30px 10px 30px 0;
     }
@@ -105,14 +105,17 @@
         el: '#app',
         data() {
             const validateCode = (rule, value, callback) => {
+                let _this = this;
                 const valueRegex = /^[0-9]{0,12}$/;
                 if (!valueRegex.test(value)) {
                     callback(new Error('数据字典编码格式不合法'))
                 } else {
+                    const param = {};
+                    param.dicCode = value;
                     _this.$http({
                         method: 'POST',
                         url: '/dictionary/checkDicCode',
-                        data: value
+                        data: param
                     }).then((res) => {
                         if(res.data.success && res.data.body){
                             callback(new Error('菜单编码已存在'));
@@ -129,7 +132,7 @@
                 addDialogFormVisible: false,
                 editDialogFormVisible: false,
                 ruleForm1: {
-                    parentCode: '',
+                    pid: '',
                     value: '',
                     code: '',
                     number: '',
@@ -138,7 +141,7 @@
                 },
                 addParentName: '',
                 ruleForm2: {
-                    parentCode: '',
+                    pid: '',
                     value: '',
                     code: '',
                     number: '',
@@ -224,10 +227,10 @@
                 let _this = this;
                 console.log(data);
                 // 新增
-                _this.ruleForm1.parentCode = data.code;
+                _this.ruleForm1.pid = data.id;
                 _this.addParentName = data.name;
                 // 修改
-                _this.ruleForm2.parentCode = data.parentCode;
+                _this.ruleForm2.pid = data.pid;
                 _this.ruleForm2.code = data.code;
                 _this.ruleForm2.name = data.name;
                 _this.ruleForm2.value = data.value;
@@ -241,7 +244,7 @@
             },
             newAdd() {
                 let _this = this;
-                if(_this.ruleForm1.parentCode === ''){
+                if(_this.ruleForm1.pid === ''){
                     _this.$message({
                         showClose: true,
                         duration: 3000,
@@ -263,7 +266,7 @@
                             url: '/dictionary/saveDicInfo',
                             data: _this.ruleForm1
                         }).then((res) => {
-                            if(res.data.success){
+                            if(res.data.code === 200){
                                 _this.addDialogFormVisible = false;
                                 _this.resetForm(formName);
                                 _this.getDictionaryTree();
@@ -324,7 +327,7 @@
                             url: '/dictionary/modifyDic',
                             data: _this.ruleForm2
                         }).then((res) => {
-                            if(res.data.success){
+                            if(res.data.code === 200){
                                 _this.editDialogFormVisible = false;
                                 _this.resetForm(formName);
                                 _this.getDictionaryTree();
@@ -375,7 +378,7 @@
                         url: '/dictionary/delete',
                         data: _this.deleteDictionaryId
                     }).then((res) => {
-                        if(res.data.success){
+                        if(res.data.code === 200){
                             _this.getDictionaryTree();
                             _this.$message({
                                 type: 'success',

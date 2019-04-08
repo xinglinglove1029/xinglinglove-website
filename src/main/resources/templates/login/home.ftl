@@ -4,9 +4,6 @@
     <#include "../common/head.ftl">
 </head>
 <style type="text/css">
-    body{
-        background-color:#ddd;
-    }
     .el-row {
         margin-bottom: 15px;}
     .el-row:last-child {

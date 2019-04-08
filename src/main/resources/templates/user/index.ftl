@@ -3,8 +3,7 @@
 <head>
     <#include "../common/head.ftl">
 </head>
-<style rel="stylesheet/scss" lang="scss">
-
+<style type="text/css">
 </style>
 <body>
 <div id="app">
@@ -38,23 +37,23 @@
                     {{scope.$index+1}}
                 </template>
             </el-table-column>
-            <el-table-column label="用户名" sortable width="120" align="center" prop="userName">
+            <el-table-column label="用户名"  align="center" prop="userName">
                 <template slot-scope="scope">
                     <span>{{scope.row.userName}}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="真实姓名" sortable width="120" align="center" prop="realName">
+            <el-table-column label="真实姓名"  align="center" prop="realName">
                 <template slot-scope="scope">
                     <el-tag v-if="scope.row.id === '1'" :type="scope.row.realName">{{scope.row.realName}}</el-tag>
                     <span v-else>{{scope.row.realName}}</span>
                 </template>
             </el-table-column>
-            <el-table-column class-name="status-col" sortable label="性别" width="110" align="center" prop="sex">
+            <el-table-column class-name="status-col"  label="性别"  align="center" prop="sex">
                 <template slot-scope="scope">
                     <el-tag :type="scope.row.sex">{{scope.row.sex | sexFilter}}</el-tag>
                 </template>
             </el-table-column>
-            <el-table-column class-name="status-col" sortable label="状态" width="110" align="center" prop="sex">
+            <el-table-column class-name="status-col" label="状态"align="center" prop="sex">
                 <template slot-scope="scope">
                     <span>{{scope.row.status | statusFilter}}</span>
                 </template>
@@ -64,18 +63,7 @@
                     {{scope.row.birthday}}
                 </template>
             </el-table-column>
-            <el-table-column align="center" sortable prop="creator" label="创建人" width="120">
-                <template slot-scope="scope">
-                    <span>{{scope.row.creator}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column align="center" sortable prop="createTime" label="创建时间" width="180">
-                <template slot-scope="scope">
-                    <i class="el-icon-time"></i>
-                    <span>{{scope.row.createTime}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column align="center"sortable prop="updater" label="修改人" width="120">
+            <el-table-column align="center" prop="updater" label="修改人">
                 <template slot-scope="scope">
                     <span>{{scope.row.updater}}</span>
                 </template>
@@ -86,11 +74,12 @@
                     <span>{{scope.row.updateTime}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" fixed="right" label="操作" width="250" class-name="small-padding">
+            <el-table-column align="center" fixed="right" label="操作" min-width="200px" class-name="small-padding">
                 <template slot-scope="scope">
                     <el-button type="primary" v-if="scope.row.status === 0 && scope.row.id != 1" size="mini" @click="enable(scope.row)">启用</el-button>
                     <el-button type="primary" v-if="scope.row.status === 1 && scope.row.id != 1" size="mini" @click="disable(scope.row)">禁用</el-button>
                     <el-button type="primary" v-if="scope.row.id != 1" size="mini" @click="edit(scope.row)">修改</el-button>
+                    <el-button type="primary" v-if="scope.row.id != 1" size="mini" @click="bindRole(scope.row)">绑定角色</el-button>
                     <el-button type="danger"  v-if="scope.row.id != 1" size="mini" @click="deleteUser(scope.row)">删除</el-button>
                 </template>
             </el-table-column>
@@ -516,6 +505,28 @@
                         message: '已取消禁用'
                     })
                 })
+            },
+            bindRole(row){
+                let _this = this;
+                _this.$http({
+                    method: 'POST',
+                    url: '/user/bindRole',
+                    data: row.id
+                }).then((res) => {
+                    if(res.data.code === 200){
+                        _this.$message({
+                            type: 'success',
+                            message: '绑定成功!'
+                        })
+                    }else{
+                        _this.$message({
+                            type: 'warning',
+                            message: res.data.message
+                        })
+                    }
+                }).catch((err) => {
+                    console.log(err);
+                });
             }
         }
     });

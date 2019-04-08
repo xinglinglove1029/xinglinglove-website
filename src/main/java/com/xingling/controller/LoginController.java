@@ -3,6 +3,7 @@ package com.xingling.controller;
 import com.xingling.common.WrapMapper;
 import com.xingling.common.Wrapper;
 import com.xingling.model.dto.LoginDto;
+import com.xingling.util.SecurityUserUtils;
 import io.swagger.annotations.Api;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -57,5 +58,10 @@ public class LoginController {
             return WrapMapper.wrap(Wrapper.ERROR_CODE, Wrapper.ERROR_MESSAGE);
         }
         return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE);
+    }
+
+    @PostMapping(value = "/getCurrentUserInfo")
+    public Wrapper<?> getCurrentUserInfo() {
+        return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, SecurityUserUtils.getUser());
     }
 }

@@ -47,7 +47,7 @@ public class DepartmentServiceImpl extends BaseServiceImpl<Department> implement
             BeanUtils.copyProperties(dept, node);
             node.setParentId(dept.getPid());
             String parentDicName = deptMap.get(dept.getPid());
-            node.setParentdeptName(parentDicName);
+            node.setParentDeptName(parentDicName);
             if(Constants.DICTIONARY_ROOT.equals(dept.getDeptCode())){
                 node.setDisabled(true);
             }else{
