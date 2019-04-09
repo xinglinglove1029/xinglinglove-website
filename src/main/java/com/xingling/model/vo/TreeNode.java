@@ -2,6 +2,7 @@ package com.xingling.model.vo;
 
 import com.google.common.collect.Lists;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -12,7 +13,9 @@ import java.util.List;
  * @Author <a href="190332447@qq.com"/>杨文生</a>
  * @CreateDate 2017/8/18 13:45
  */
-public class TreeNode {
+public class TreeNode implements Serializable {
+
+    private static final long serialVersionUID = -3528018867239913975L;
 
     private String id;
 

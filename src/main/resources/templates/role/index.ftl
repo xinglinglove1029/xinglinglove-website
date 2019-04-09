@@ -4,6 +4,30 @@
     <#include "../common/head.ftl">
 </head>
 <style type="text/css">
+    .el-tree{
+        width:300px
+    }
+    .el-tree-node__content {
+        line-height: 36px;
+        height: 36px;
+        cursor: pointer
+    }
+
+    .el-tree-node__content>.el-checkbox,.el-tree-node__content>.el-tree-node__expand-icon {
+        margin-right: 8px
+    }
+
+    .el-tree-node__content>.el-checkbox {
+        vertical-align: middle
+    }
+
+    .el-tree-node__content:hover {
+        background: #e4e8f1
+    }
+
+    .el-tree--highlight-current .el-tree-node.is-current>.el-tree-node__content {
+        background-color: #edf7ff
+    }
 </style>
 <body>
 <div id="app">
@@ -63,12 +87,13 @@
                     <span>{{scope.row.updateTime}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" fixed="right" label="操作" width="350" class-name="small-padding">
+            <el-table-column align="center" fixed="right" label="操作" min-width="200" class-name="small-padding">
                 <template slot-scope="scope">
                     <el-button type="primary" v-if="scope.row.status === '0' && scope.row.id !== '1'" size="mini" @click="enable(scope.row)">启用</el-button>
                     <el-button type="primary" v-if="scope.row.status === '1' && scope.row.id !== '1'" size="mini" @click="disable(scope.row)">禁用</el-button>
                     <el-button type="primary" v-if="scope.row.id !== '1'" size="mini" @click="edit(scope.row)">修改</el-button>
                     <el-button type="primary" v-if="scope.row.id !== '1'" size="mini" @click="bindUser(scope.row)">绑定用户</el-button>
+                    <el-button type="primary" v-if="scope.row.id !== '1'" size="mini" @click="bindAuthority(scope.row)">绑定权限</el-button>
                     <el-button type="danger" v-if="scope.row.id !== '1'" size="mini" @click="deleteRole(scope.row)">删除</el-button>
                 </template>
             </el-table-column>
@@ -79,7 +104,7 @@
             </el-pagination>
         </div>
         <!--新增模态框-->
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" @click="dialogFormVisible = false">
             <el-form :rules="rules" ref="dataForm" :model="role" label-position="left" label-width="80px" style='width: 400px; margin-left:50px;'>
                 <el-form-item label="角色名" prop="roleName">
                     <el-input v-model.trim="role.roleName"></el-input>
@@ -99,7 +124,7 @@
             </div>
         </el-dialog>
         <!--角色绑定用户模态框-->
-        <el-dialog :visible.sync="bindUserDialogVisible">
+        <el-dialog :visible.sync="bindUserDialogVisible" @click="bindUserDialogVisible = false">
             <template>
                 <el-transfer
                         filterable
@@ -121,6 +146,33 @@
                         :data="notBindUser">
                 </el-transfer>
             </template>
+        </el-dialog>
+        <!--角色绑定权限模态框-->
+        <el-dialog :visible.sync="bindAuthorityDialogVisible" @click="bindAuthorityDialogVisible = false">
+            <div class="tree-container" >
+                <el-row :gutter="24">
+                    <el-col :span="6" :xs="24" :sm="24" :md="6" :lg="6" style="margin-bottom: 20px;">
+                        <el-input placeholder="输入关键字进行过滤" v-model="filterText" style="width:300px"> </el-input>
+                        <el-tree
+                                class="filter-tree"
+                                show-checkbox
+                                :data="treeData"
+                                :props="defaultProps"
+                                default-expand-all
+                                node-key="id"
+                                highlight-current
+                                accordion
+                                :filter-node-method="filterNode"
+                                ref="authorityTree">
+                        </el-tree>
+                    </el-col>
+                </el-row>
+
+            </div>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="bindAuthorityDialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="saveAuthorityInfo">确 定</el-button>
+            </div>
         </el-dialog>
     </div>
 </div>
@@ -179,7 +231,14 @@
                 filterMethod(query, item) {
                     return item.realName.indexOf(query) > -1;
                 },
-                tableData: null,
+                filterText: '',
+                treeData: [],
+                defaultProps: {
+                    children: 'children',
+                    label: 'resourceName'
+                },
+                tableData: [],
+                checkedNodeList: [],
                 listLoading: true,
                 total: 0,
                 listQuery: {
@@ -200,6 +259,7 @@
                 ],
                 dialogFormVisible: false,
                 bindUserDialogVisible: false,
+                bindAuthorityDialogVisible: false,
                 dialogStatus: '',
                 textMap: {
                     update: '修改',
@@ -227,6 +287,11 @@
                 }
             }
         },
+        watch: {
+            filterText(val) {
+                this.$refs.authorityTree.filter(val);
+            }
+        },
         filters: {
             statusFilter(status) {
                 const statusMap = {
@@ -240,6 +305,10 @@
             this.fetchData();
         },
         methods: {
+            filterNode(value, data) {
+                if (!value) return true;
+                return data.resourceName.indexOf(value) !== -1;
+            },
             fetchData() {
                 let _this = this;
                 _this.listLoading = true;
@@ -292,6 +361,7 @@
                         }).then((res) => {
                             if(res.data.code === 200){
                                 _this.dialogFormVisible = true;
+                                _this.resetRoleData();
                                 _this.fetchData();
                                 _this.$message({
                                     type: 'success',
@@ -317,6 +387,13 @@
                     status: '1'
                 }
             },
+            resetRoleData() {
+                let _this = this;
+                _this.role = {
+                    roleName: '',
+                    roleCode: ''
+                }
+            },
             edit(row) {
                 let _this = this;
                 _this.role = Object.assign({}, row);
@@ -337,7 +414,7 @@
                         }).then((res) => {
                             if(res.data.code === 200){
                                 _this.dialogFormVisible = false;
-                                _this.resetUserData();
+                                _this.resetRoleData();
                                 _this.fetchData();
                                 _this.$message({
                                     type: 'success',
@@ -490,6 +567,41 @@
                 }).catch((err) => {
                     console.log(err);
                 });
+            },
+            bindAuthority(row){
+                let _this = this;
+                console.log(row);
+                _this.bindAuthorityDialogVisible = true;
+                _this.listLoading = true;
+                _this.$http({
+                    method: 'POST',
+                    url: '/role/getAllAuthorityInfoList'
+                }).then((res) => {
+                    if(res.data.code === 200){
+                        _this.treeData = res.data.result;
+                        _this.listLoading = false;
+                    }else{
+                        _this.$message({
+                            type: 'warning',
+                            message: res.data.message
+                        })
+                    }
+                }).catch((err) => {
+                    console.log(err);
+                });
+            },
+            saveAuthorityInfo(){
+                let _this = this;
+                let checkedNodes = _this.$refs.authorityTree.getCheckedNodes();
+                console.log(checkedNodes);
+                _this.checkedNodeList = [];
+                checkedNodes.forEach((item) => {
+                    let obj = {};
+                    obj.id = item.id;
+                    obj.type = item.type;
+                    _this.checkedNodeList.push(obj);
+                });
+                console.log(_this.checkedNodeList);
             },
             handleChange(value, direction, movedKeys) {
                 console.log(value, direction, movedKeys);

@@ -7,6 +7,11 @@
     .filter-container{
         margin: 30px 10px 30px 0;
     }
+    .el-tree-node__content {
+        line-height: 36px;
+        height: 36px;
+        cursor: pointer
+    }
 </style>
 <body>
 <div id="app">
@@ -16,23 +21,24 @@
             <el-button class="filter-item" type="primary"  @click="updateDept" >修改</el-button>
             <el-button class="filter-item" type="primary"  @click="deleteDept" >删除</el-button>
         </div>
-        <div class="tree-container" style="width:25%;">
-            <el-input
-                    placeholder="输入关键字进行过滤"
-                    v-model="filterText">
-            </el-input>
-            <el-tree
-                    class="filter-tree"
-                    :data="treeData"
-                    :props="defaultProps"
-                    default-expand-all
-                    node-key="id"
-                    highlight-current
-                    accordion
-                    :filter-node-method="filterNode"
-                    @node-click="getNodeData"
-                    ref="deptTree">
-            </el-tree>
+        <div class="tree-container">
+            <el-row :gutter="24">
+                <el-col :span="6" :xs="24" :sm="24" :md="6" :lg="6" style="margin-bottom: 20px;">
+                    <el-input placeholder="输入关键字进行过滤"v-model="filterText"></el-input>
+                    <el-tree
+                            class="filter-tree"
+                            :data="treeData"
+                            :props="defaultProps"
+                            default-expand-all
+                            node-key="id"
+                            highlight-current
+                            accordion
+                            :filter-node-method="filterNode"
+                            @node-click="getNodeData"
+                            ref="deptTree">
+                    </el-tree>
+                </el-col>
+            </el-row>
         </div>
         <!--新增模态框-->
         <el-dialog :visible.sync="addDialogFormVisible" @close="resetForm('ruleForm1')">

@@ -12,12 +12,15 @@
       position: fixed;
       height: 100%;
       width: 100%;
-      background-color: #2d3a4b;
+      background:url(../../static/image/login.png) no-repeat;
+      background-size: cover;
+      -moz-background-size: cover;
+      -webkit-background-size: cover
   }
   .login-container .title {
       font-size: 26px;
       font-weight: 400;
-      color: #eee;
+      color: #8c5c5c;
       margin: 0px auto 40px auto;
       text-align: center;
       font-weight: bold;

@@ -140,12 +140,12 @@
         data() {
             const validateAuthorityCode = (rule, value, callback) => {
                 let _this = this;
-                const authorityCodeRegex = /^[A-Za-z0-9]{3,16}$/
+                const authorityCodeRegex = /^[A-Za-z0-9:]{3,16}$/;
                 if (!authorityCodeRegex.test(value)) {
                     callback(new Error('权限编码格式不合法'))
                 } else {
-                    const param = {}
-                    param.authorityCode = value
+                    const param = {};
+                    param.authorityCode = value;
                     if (_this.dialogStatus === 'update') {
                         param.authorityId = _this.ruleForm.id
                     }
@@ -166,7 +166,7 @@
                 }
             };
             const validateAuthorityName = (rule, value, callback) => {
-                const authorityNameRegex = /^[\u4e00-\u9faf]+$/
+                const authorityNameRegex = /^[\u4e00-\u9faf]+$/;
                 if (!authorityNameRegex.test(value)) {
                     callback(new Error('权限名称格式不合法'));
                 } else {
@@ -317,6 +317,7 @@
                         }).then((res) => {
                             if(res.data.code === 200){
                                 _this.dialogFormVisible = true;
+                                _this.resetAuthorityData();
                                 _this.fetchData();
                                 _this.$message({
                                     type: 'success',
@@ -364,7 +365,7 @@
                         }).then((res) => {
                             if(res.data.code === 200){
                                 _this.dialogFormVisible = false;
-                                _this.resetUserData();
+                                _this.resetAuthorityData();
                                 _this.fetchData();
                                 _this.$message({
                                     type: 'success',

@@ -7,6 +7,11 @@
    .filter-container{
        margin: 30px 10px 30px 0;
    }
+   .el-tree-node__content {
+       line-height: 36px;
+       height: 36px;
+       cursor: pointer
+   }
 </style>
 <body>
 <div id="app">

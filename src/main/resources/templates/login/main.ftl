@@ -209,7 +209,7 @@
     <el-container>
         <el-header>
             <div class="logo">
-                <img style="vertical-align:middle;width: 32px;height:32px;margin-left: -60px;" src="../../static/image/logo.png">
+                <img style="vertical-align:middle;width: 40px;height:40px;margin-left: -60px;" src="../../static/image/logo.png">
                 <span style="vertical-align:middle;line-height:60px;font-size: 18px;margin-left: 10px;color:#ffffff;cursor: pointer;" @click="reLoad()">后台管理系统</span>
                 <img class="hamburger" :class="{'is-active':isCollapse}"  @click="isCollapse=!isCollapse" src="../../static/image/hamburger.png">
             </div>

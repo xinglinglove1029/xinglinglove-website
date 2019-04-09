@@ -4984,7 +4984,8 @@
     position: relative;
     cursor: default;
     background: #FFF;
-    color: #606266
+    color: #606266;
+    border: 1px solid #d1dbe5
 }
 
 .el-tree__empty-block {
@@ -5064,7 +5065,7 @@
 .el-tree-node__expand-icon {
     cursor: pointer;
     color: #C0C4CC;
-    font-size: 12px;
+    font-size: 20px;
     -webkit-transform: rotate(0);
     transform: rotate(0);
     -webkit-transition: -webkit-transform .3s ease-in-out;

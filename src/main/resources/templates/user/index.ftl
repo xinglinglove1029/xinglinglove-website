@@ -327,6 +327,7 @@
                         }).then((res) => {
                             if(res.data.code === 200){
                                 _this.dialogFormVisible = true;
+                                _this.resetUserData();
                                 _this.fetchData();
                                 _this.$message({
                                     type: 'success',

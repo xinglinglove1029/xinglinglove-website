@@ -3,6 +3,7 @@ package com.xingling.service;
 import com.xingling.base.BaseService;
 import com.xingling.model.domain.Authority;
 import com.xingling.model.dto.AuthUserDto;
+import com.xingling.model.vo.AuthorityTreeVo;
 
 import java.util.List;
 
@@ -98,4 +99,14 @@ public interface AuthorityService extends BaseService<Authority> {
      * @since 2018 /4/27 10:17
      */
     List<Authority> queryListPage(Authority authority);
+
+    /**
+     * <p>Title:      getAllAuthorityInfoList. </p>
+     * <p>Description 查询权限树</p>
+     *
+     * @return
+     * @Author        <a href="yangwensheng@meicai.cn"/>杨文生</a>
+     * @since     2019/4/9 14:30
+     */
+    List<AuthorityTreeVo> getAllAuthorityInfoList();
 }

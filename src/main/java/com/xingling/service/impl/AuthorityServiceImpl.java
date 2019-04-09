@@ -1,18 +1,24 @@
 package com.xingling.service.impl;
 
+import com.google.common.collect.Lists;
 import com.xingling.base.BaseServiceImpl;
 import com.xingling.constants.Constants;
 import com.xingling.exception.BusinessException;
 import com.xingling.mapper.AuthorityMapper;
+import com.xingling.mapper.MenuMapper;
 import com.xingling.model.domain.Authority;
+import com.xingling.model.domain.Menu;
 import com.xingling.model.dto.AuthUserDto;
+import com.xingling.model.vo.AuthorityTreeVo;
 import com.xingling.service.AuthorityService;
+import com.xingling.util.TreeUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * <p>Title:	  AuthorityServiceImpl <br/> </p>
@@ -27,6 +33,9 @@ public class AuthorityServiceImpl extends BaseServiceImpl<Authority> implements 
 
     @Resource
     private AuthorityMapper authorityMapper;
+
+    @Resource
+    private MenuMapper menuMapper;
 
     @Override
     public List<Authority> getOwnAuthority(String userId) {
@@ -116,5 +125,43 @@ public class AuthorityServiceImpl extends BaseServiceImpl<Authority> implements 
     @Override
     public List<Authority> queryListPage(Authority authority) {
         return authorityMapper.queryListPage(authority);
+    }
+
+    @Override
+    public List<AuthorityTreeVo> getAllAuthorityInfoList() {
+        // 查询所有菜单信息
+        List<Menu> menuList = menuMapper.selectAllMenu();
+        menuList = menuList.stream().filter(f -> !Constants.ROOT_PARENTID.equals(f.getPid())).collect(Collectors.toList());
+
+        // 查询所有权限信息
+        List<Authority> authorityList = authorityMapper.selectAll();
+
+        // 合并菜单和权限数据
+        List<AuthorityTreeVo> authorityTreeVos = this.buildResourceData(menuList, authorityList);
+        return TreeUtil.bulid(authorityTreeVos, Constants.MENU_ROOT);
+    }
+
+    private List<AuthorityTreeVo> buildResourceData(List<Menu> menuList, List<Authority> authorityList) {
+        List<AuthorityTreeVo> authorityTreeVos = Lists.newArrayList();
+        AuthorityTreeVo authorityTreeVo;
+        for (Menu menu : menuList) {
+            authorityTreeVo = new AuthorityTreeVo();
+            authorityTreeVo.setId(menu.getId());
+            authorityTreeVo.setParentId(menu.getPid());
+            authorityTreeVo.setResourceName(menu.getMenuName());
+            authorityTreeVo.setType("1");
+            authorityTreeVos.add(authorityTreeVo);
+        }
+        if (authorityList != null) {
+            for (Authority authority : authorityList) {
+                authorityTreeVo = new AuthorityTreeVo();
+                authorityTreeVo.setId(authority.getId());
+                authorityTreeVo.setParentId(authority.getMenuId());
+                authorityTreeVo.setResourceName(authority.getAuthorityName());
+                authorityTreeVo.setType("2");
+                authorityTreeVos.add(authorityTreeVo);
+            }
+        }
+        return authorityTreeVos;
     }
 }

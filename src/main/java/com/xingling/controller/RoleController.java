@@ -9,6 +9,8 @@ import com.xingling.model.domain.Role;
 import com.xingling.model.dto.AuthUserDto;
 import com.xingling.model.dto.CheckRoleNameDto;
 import com.xingling.model.dto.RoleBindUserDto;
+import com.xingling.model.vo.AuthorityTreeVo;
+import com.xingling.service.AuthorityService;
 import com.xingling.service.RoleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,6 +39,9 @@ public class RoleController extends BaseController {
 
     @Resource
     private RoleService roleService;
+
+    @Resource
+    private AuthorityService authorityService;
 
     @GetMapping(value = "/index")
     public ModelAndView index() {
@@ -185,5 +190,20 @@ public class RoleController extends BaseController {
         String currentUserId = authUserDto.getUserId();
         RoleBindUserDto bindUserDto = roleService.getBindUserByRoleId(roleId, currentUserId);
         return WrapMapper.ok(bindUserDto);
+    }
+
+    /**
+     * <p>Title:      getAllAuthorityInfoList. </p>
+     * <p>Description 查询权限树</p>
+     *
+     * @return
+     * @Author        <a href="yangwensheng@meicai.cn"/>杨文生</a>
+     * @since     2019/4/9 14:30
+     */
+    @PostMapping(value = "/getAllAuthorityInfoList")
+    @ApiOperation(httpMethod = "POST", value = "查询权限树")
+    public Wrapper<List<AuthorityTreeVo>> getAllAuthorityInfoList() {
+        List<AuthorityTreeVo> authorityTreeVos = authorityService.getAllAuthorityInfoList();
+        return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, authorityTreeVos);
     }
 }
