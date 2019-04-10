@@ -7,15 +7,15 @@ import javax.persistence.Table;
 import java.io.Serializable;
 
 @Data
-@Table(name = "xl_dept_role")
-public class DeptRole  implements Serializable {
+@Table(name = "xl_user_dept")
+public class UserDept implements Serializable {
 
     private static final long serialVersionUID = 5708803502970200051L;
     /**
      * 角色编号
      */
-    @Column(name = "role_id")
-    private String roleId;
+    @Column(name = "user_id")
+    private String userId;
 
     /**
      * 部门编号

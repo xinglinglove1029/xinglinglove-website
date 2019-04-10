@@ -1,7 +1,7 @@
 package com.xingling.mapper;
 
 import com.xingling.base.MyMapper;
-import com.xingling.model.domain.DeptRole;
+import com.xingling.model.domain.UserDept;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Component;
 
@@ -16,5 +16,5 @@ import org.springframework.stereotype.Component;
  */
 @Mapper
 @Component
-public interface DeptRoleMapper extends MyMapper<DeptRole> {
+public interface UserDeptMapper extends MyMapper<UserDept> {
 }

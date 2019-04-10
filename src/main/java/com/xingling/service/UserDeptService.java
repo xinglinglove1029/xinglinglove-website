@@ -1,7 +1,7 @@
 package com.xingling.service;
 
 import com.xingling.base.BaseService;
-import com.xingling.model.domain.DeptRole;
+import com.xingling.model.domain.UserDept;
 
 /**
  * Title: DeptRoleService<br>;
@@ -12,5 +12,5 @@ import com.xingling.model.domain.DeptRole;
  * @author yangwensheng@meicai.cn<br>
  * 2018/11/21 18:29
  */
-public interface DeptRoleService extends BaseService<DeptRole> {
+public interface UserDeptService extends BaseService<UserDept> {
 }

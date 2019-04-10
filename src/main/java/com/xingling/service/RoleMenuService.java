@@ -15,4 +15,5 @@ import com.xingling.model.domain.RoleMenu;
  */
 public interface RoleMenuService extends BaseService<RoleMenu> {
 
+    int batchDeleteByRoleId(String roleId);
 }

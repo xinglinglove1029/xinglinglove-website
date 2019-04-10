@@ -10,4 +10,7 @@
     <id column="authority_id" property="authorityId" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >role_id, authority_id</sql>
+    <delete id="batchDeleteByRoleId">
+      DELETE FROM xl_role_authority where role_id = #{roleId}
+    </delete>
 </mapper>

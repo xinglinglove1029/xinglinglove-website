@@ -2,8 +2,8 @@ package com.xingling.service.impl;
 
 
 import com.xingling.base.BaseServiceImpl;
-import com.xingling.model.domain.DeptRole;
-import com.xingling.service.DeptRoleService;
+import com.xingling.model.domain.UserDept;
+import com.xingling.service.UserDeptService;
 import org.springframework.stereotype.Service;
 
 /**
@@ -16,5 +16,5 @@ import org.springframework.stereotype.Service;
  * 2018/11/21 18:29
  */
 @Service
-public class DeptRoleServiceImpl extends BaseServiceImpl<DeptRole> implements DeptRoleService {
+public class UserDeptServiceImpl extends BaseServiceImpl<UserDept> implements UserDeptService {
 }

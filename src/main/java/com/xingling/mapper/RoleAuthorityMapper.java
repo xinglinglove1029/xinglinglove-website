@@ -9,4 +9,5 @@ import org.springframework.stereotype.Component;
 @Component
 public interface RoleAuthorityMapper extends MyMapper<RoleAuthority> {
 
+    int batchDeleteByRoleId(String roleId);
 }

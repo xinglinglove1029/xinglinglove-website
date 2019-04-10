@@ -16,4 +16,7 @@
     -->
     role_id, menu_id
   </sql>
+    <delete id="batchDeleteByRoleId">
+      DELETE FROM xl_role_menu where role_id = #{roleId}
+    </delete>
 </mapper>

@@ -1,6 +1,5 @@
 package com.xingling.model.domain;
 
-import com.xingling.base.BaseEntiy;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -9,7 +8,7 @@ import java.io.Serializable;
 
 @Data
 @Table(name = "xl_role_authority")
-public class RoleAuthority extends BaseEntiy implements Serializable {
+public class RoleAuthority  implements Serializable {
 
     private static final long serialVersionUID = 3427359556351421571L;
     /**

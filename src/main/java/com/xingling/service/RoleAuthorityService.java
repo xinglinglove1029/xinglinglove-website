@@ -14,4 +14,5 @@ import com.xingling.model.domain.RoleAuthority;
  */
 public interface RoleAuthorityService extends BaseService<RoleAuthority> {
 
+    int batchDeleteByRoleId(String roleId);
 }

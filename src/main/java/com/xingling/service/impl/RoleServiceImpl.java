@@ -1,17 +1,20 @@
 package com.xingling.service.impl;
 
+import com.google.common.collect.Lists;
 import com.xingling.base.BaseEntiy;
 import com.xingling.base.BaseServiceImpl;
 import com.xingling.constants.Constants;
 import com.xingling.exception.BusinessException;
 import com.xingling.mapper.RoleMapper;
 import com.xingling.model.domain.Role;
+import com.xingling.model.domain.RoleAuthority;
+import com.xingling.model.domain.RoleMenu;
 import com.xingling.model.domain.User;
 import com.xingling.model.dto.AuthUserDto;
+import com.xingling.model.dto.ResourceDto;
+import com.xingling.model.dto.RoleBindAuthorityDto;
 import com.xingling.model.dto.RoleBindUserDto;
-import com.xingling.service.RoleService;
-import com.xingling.service.UserRoleService;
-import com.xingling.service.UserService;
+import com.xingling.service.*;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -39,6 +42,12 @@ public class RoleServiceImpl extends BaseServiceImpl<Role> implements RoleServic
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private RoleMenuService roleMenuService;
+
+    @Resource
+    private RoleAuthorityService roleAuthorityService;
 
     @Override
     public List<Role> queryListPage(Role role) {
@@ -143,5 +152,82 @@ public class RoleServiceImpl extends BaseServiceImpl<Role> implements RoleServic
         bindUserDto.setNotBindUserList(notBindUserList);
         bindUserDto.setAlreadyBindUserIds(alreadyBindUserIds);
         return bindUserDto;
+    }
+
+    @Override
+    public void roleBindResource(RoleBindAuthorityDto roleBindAuthority, AuthUserDto authUserDto) {
+        // 根据角色id查询该角色
+        Role queryRole = new Role();
+        queryRole.setId(roleBindAuthority.getRoleId());
+        queryRole.setDel(Constants.DELETE_NO);
+        Role rl = roleMapper.selectOne(queryRole);
+        if (Objects.isNull(rl)) {
+            throw new BusinessException("角色信息不存在");
+        }
+
+        // 删除该角色所绑定的菜单和权限关系
+        roleMenuService.batchDeleteByRoleId(roleBindAuthority.getRoleId());
+        roleAuthorityService.batchDeleteByRoleId(roleBindAuthority.getRoleId());
+
+
+        List<ResourceDto> resourceInfoList = roleBindAuthority.getResourceInfoList();
+        // 过滤出菜单
+        List<ResourceDto> menuResourceInfo = resourceInfoList.stream().filter(f -> "1".equals(f.getType())).collect(Collectors.toList());
+        List<String> menuIdList = menuResourceInfo.stream().map(ResourceDto::getResourceId).collect(Collectors.toList());
+
+        // 过滤出按钮权限
+        List<ResourceDto> authorityResourceInfo = resourceInfoList.stream().filter(f -> "1".equals(f.getType())).collect(Collectors.toList());
+        List<String> authorityIdList = authorityResourceInfo.stream().map(ResourceDto::getResourceId).collect(Collectors.toList());
+
+        List<RoleMenu> roleMenuList = this.buildMenuRoleInfo(menuIdList, roleBindAuthority.getRoleId());
+        List<RoleAuthority> roleAuthorities = this.buildAuthorityRoleInfo(authorityIdList, roleBindAuthority.getRoleId());
+
+        // 保存菜单权限与角色的关系
+        roleMenuService.batchSave(roleMenuList);
+        roleAuthorityService.batchSave(roleAuthorities);
+
+    }
+
+
+    private List<RoleMenu> buildMenuRoleInfo(List<String> menuIdList, String roleId) {
+        List<RoleMenu> roleMenuList = Lists.newArrayList();
+        RoleMenu roleMenu = null;
+        for (String menuId : menuIdList) {
+            roleMenu = new RoleMenu();
+            roleMenu.setRoleId(roleId);
+            roleMenu.setMenuId(menuId);
+            roleMenuList.add(roleMenu);
+        }
+        return roleMenuList;
+    }
+
+    private List<RoleAuthority> buildAuthorityRoleInfo(List<String> authorityIdList, String roleId) {
+        List<RoleAuthority> roleAuthorities = Lists.newArrayList();
+        RoleAuthority roleAuthority = null;
+        for (String authorityId : authorityIdList) {
+            roleAuthority = new RoleAuthority();
+            roleAuthority.setRoleId(roleId);
+            roleAuthority.setAuthorityId(authorityId);
+            roleAuthorities.add(roleAuthority);
+        }
+        return roleAuthorities;
+    }
+
+    @Override
+    public List<String> getBindResourceInfoByRoleId(String roleId) {
+        List<String> resourceIdList = Lists.newArrayList();
+        RoleMenu roleMenu = new RoleMenu();
+        roleMenu.setRoleId(roleId);
+        List<RoleMenu> roleMenuList = roleMenuService.select(roleMenu);
+        List<String> menuIdList = roleMenuList.stream().map(RoleMenu::getMenuId).collect(Collectors.toList());
+
+        RoleAuthority roleAuthority = new RoleAuthority();
+        roleAuthority.setRoleId(roleId);
+        List<RoleAuthority> roleAuthorityList = roleAuthorityService.select(roleAuthority);
+        List<String> authorityIdList = roleAuthorityList.stream().map(RoleAuthority::getAuthorityId).collect(Collectors.toList());
+
+        resourceIdList.addAll(menuIdList);
+        resourceIdList.addAll(authorityIdList);
+        return resourceIdList;
     }
 }

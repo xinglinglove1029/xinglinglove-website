@@ -8,6 +8,7 @@ import com.xingling.common.Wrapper;
 import com.xingling.model.domain.Role;
 import com.xingling.model.dto.AuthUserDto;
 import com.xingling.model.dto.CheckRoleNameDto;
+import com.xingling.model.dto.RoleBindAuthorityDto;
 import com.xingling.model.dto.RoleBindUserDto;
 import com.xingling.model.vo.AuthorityTreeVo;
 import com.xingling.service.AuthorityService;
@@ -164,7 +165,7 @@ public class RoleController extends BaseController {
      * @Author <a href="190332447@qq.com"/>杨文生</a>
      * @since 2018 /2/24 17:08
      */
-    @PostMapping(value = "/checkRoleName")
+    @PostMapping(value = "/checkRoleCode")
     @ApiOperation(httpMethod = "POST", value = "校验角色名唯一性")
     public Wrapper<Boolean> checkRoleName(@ApiParam(name = "checkRoleNameDto", value = "用户名dto") @RequestBody CheckRoleNameDto checkRoleNameDto) {
         boolean flag = false;
@@ -206,4 +207,38 @@ public class RoleController extends BaseController {
         List<AuthorityTreeVo> authorityTreeVos = authorityService.getAllAuthorityInfoList();
         return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, authorityTreeVos);
     }
+
+    /**
+     * <p>Title:      roleBindResource. </p>
+     * <p>Description 角色绑定资源</p>
+     *
+     * @param        roleBindAuthority  RoleBindAuthority
+     * @return
+     * @Author        <a href="yangwensheng@meicai.cn"/>杨文生</a>
+     * @since     2019/4/10 20:18
+     */
+    @PostMapping(value = "/roleBindResource")
+    @ApiOperation(httpMethod = "POST", value = "角色绑定资源")
+    public Wrapper<Boolean> roleBindResource(@RequestBody RoleBindAuthorityDto roleBindAuthority) {
+        AuthUserDto authUserDto = getLoginAuthDto();
+        roleService.roleBindResource(roleBindAuthority,authUserDto);
+        return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE);
+    }
+
+    /**
+     * <p>Title:      getBindResourceInfoByRoleId. </p>
+     * <p>Description 获取角色绑定的资源</p>
+     *
+     * @param         roleId String
+     * @return
+     * @Author        <a href="yangwensheng@meicai.cn"/>杨文生</a>
+     * @since     2019/4/10 21:21
+     */
+    @RequestMapping(value = "/getBindResourceInfoByRoleId", method = RequestMethod.POST)
+    @ApiOperation(httpMethod = "POST", value = "获取角色绑定的资源")
+    public Wrapper<List<String>> getBindResourceInfoByRoleId(@RequestBody String roleId) {
+        List<String> resourceId = roleService.getBindResourceInfoByRoleId(roleId);
+        return WrapMapper.ok(resourceId);
+    }
+
 }

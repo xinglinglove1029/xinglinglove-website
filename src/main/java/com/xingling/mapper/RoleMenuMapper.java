@@ -9,4 +9,5 @@ import org.springframework.stereotype.Component;
 @Component
 public interface RoleMenuMapper extends MyMapper<RoleMenu> {
 
+    int batchDeleteByRoleId(String roleId);
 }

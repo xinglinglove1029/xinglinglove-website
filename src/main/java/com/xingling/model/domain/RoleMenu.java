@@ -1,6 +1,5 @@
 package com.xingling.model.domain;
 
-import com.xingling.base.BaseEntiy;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -9,20 +8,20 @@ import java.io.Serializable;
 
 @Data
 @Table(name = "xl_role_menu")
-public class RoleMenu extends BaseEntiy implements Serializable {
+public class RoleMenu  implements Serializable {
 
     private static final long serialVersionUID = -4275468683311261833L;
 
     /**
      * 角色编号
      */
-    @Column(name = "status")
+    @Column(name = "role_id")
     private String roleId;
 
     /**
      * 菜单编号
      */
-    @Column(name = "status")
+    @Column(name = "menu_id")
     private String menuId;
 
 }

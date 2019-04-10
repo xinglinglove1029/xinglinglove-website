@@ -161,6 +161,7 @@
                                 default-expand-all
                                 node-key="id"
                                 highlight-current
+                                :default-checked-keys="checkedKeys"
                                 accordion
                                 :filter-node-method="filterNode"
                                 ref="authorityTree">
@@ -257,6 +258,8 @@
                         value: '禁用'
                     }
                 ],
+                selectedRoleId: '',
+                checkedKeys: [],
                 dialogFormVisible: false,
                 bindUserDialogVisible: false,
                 bindAuthorityDialogVisible: false,
@@ -571,6 +574,7 @@
             bindAuthority(row){
                 let _this = this;
                 console.log(row);
+                _this.selectedRoleId = row.id;
                 _this.bindAuthorityDialogVisible = true;
                 _this.listLoading = true;
                 _this.$http({
@@ -589,19 +593,55 @@
                 }).catch((err) => {
                     console.log(err);
                 });
+                _this.$http({
+                    method: 'POST',
+                    url: '/role/getBindResourceInfoByRoleId',
+                    data: _this.selectedRoleId
+                }).then((res) => {
+                    if(res.data.code === 200){
+                        _this.checkedKeys = res.data.result;
+                        _this.listLoading = false;
+                    }else{
+                        _this.$message({
+                            type: 'warning',
+                            message: res.data.message
+                        })
+                    }
+                }).catch((err) => {
+                    console.log(err);
+                });
             },
             saveAuthorityInfo(){
                 let _this = this;
                 let checkedNodes = _this.$refs.authorityTree.getCheckedNodes();
-                console.log(checkedNodes);
                 _this.checkedNodeList = [];
                 checkedNodes.forEach((item) => {
                     let obj = {};
-                    obj.id = item.id;
+                    obj.resourceId = item.id;
                     obj.type = item.type;
                     _this.checkedNodeList.push(obj);
                 });
-                console.log(_this.checkedNodeList);
+                let param = {};
+                param.roleId = _this.selectedRoleId;
+                param.resourceInfoList = _this.checkedNodeList;
+                console.log(param);
+                _this.$http({
+                    method: 'POST',
+                    url: '/role/roleBindResource',
+                    data: param
+                }).then((res) => {
+                    if(res.data.code === 200){
+                        _this.bindAuthorityDialogVisible = false;
+                        _this.listLoading = false;
+                    }else{
+                        _this.$message({
+                            type: 'warning',
+                            message: res.data.message
+                        })
+                    }
+                }).catch((err) => {
+                    console.log(err);
+                });
             },
             handleChange(value, direction, movedKeys) {
                 console.log(value, direction, movedKeys);
