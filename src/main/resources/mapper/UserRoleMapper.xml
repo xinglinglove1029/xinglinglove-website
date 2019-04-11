@@ -12,6 +12,9 @@
   <sql id="Base_Column_List" >
     role_id, user_id
   </sql>
+    <delete id="deleteByUserId">
+        DELETE FROM xl_user_role where user_id = #{userId}
+    </delete>
     <select id="queryOwnRoles" resultType="com.xingling.model.dto.RoleDto">
       SELECT
         DISTINCT
@@ -31,5 +34,8 @@
         WHERE
             aa.role_id = #{roleId}
         AND user_id != '1'
+    </select>
+    <select id="getBindRoleListByUserId" resultType="java.lang.String">
+        select role_id from xl_user_role where user_id = #{userId}
     </select>
 </mapper>

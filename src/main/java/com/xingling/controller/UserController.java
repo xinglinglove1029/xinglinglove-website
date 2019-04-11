@@ -5,9 +5,15 @@ import com.github.pagehelper.PageInfo;
 import com.xingling.base.BaseController;
 import com.xingling.common.WrapMapper;
 import com.xingling.common.Wrapper;
+import com.xingling.model.domain.Department;
+import com.xingling.model.domain.Role;
 import com.xingling.model.domain.User;
 import com.xingling.model.dto.AuthUserDto;
 import com.xingling.model.dto.CheckUserNameDto;
+import com.xingling.model.dto.UserBindRoleDto;
+import com.xingling.service.DepartmentService;
+import com.xingling.service.RoleService;
+import com.xingling.service.UserRoleService;
 import com.xingling.service.UserService;
 import com.xingling.util.SecurityUserUtils;
 import io.swagger.annotations.Api;
@@ -37,6 +43,15 @@ public class UserController extends BaseController {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private RoleService roleService;
+
+    @Resource
+    private UserRoleService userRoleService;
+
+    @Resource
+    private DepartmentService departmentService;
 
     @GetMapping(value = "/index")
     public ModelAndView index() {
@@ -210,4 +225,68 @@ public class UserController extends BaseController {
         }
         return WrapMapper.ok(flag);
     }
+
+    /**
+     * <p>Title:      getRoleList. </p>
+     * <p>Description 查詢所有角色信息</p>
+     *
+     * @return
+     * @Author        <a href="yangwensheng@meicai.cn"/>杨文生</a>
+     * @since     2019/4/11 14:35
+     */
+    @PostMapping(value = "/getRoleList")
+    @ApiOperation(httpMethod = "POST", value = "查询角色信息")
+    public Wrapper<List<Role>> getRoleList() {
+        List<Role> roleList = roleService.selectAll();
+        return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, roleList);
+    }
+
+    /**
+     * <p>Title:      getRoleList. </p>
+     * <p>Description 查詢当前用户所绑定的角色信息</p>
+     *
+     * @param userId String
+     * @return
+     * @Author        <a href="yangwensheng@meicai.cn"/>杨文生</a>
+     * @since     2019/4/11 14:35
+     */
+    @PostMapping(value = "/getBindRoleListByUserId")
+    @ApiOperation(httpMethod = "POST", value = "查询角色信息")
+    public Wrapper<List<String>> getBindRoleListByUserId(@RequestBody String userId) {
+        List<String> bindRoleList = userRoleService.getBindRoleListByUserId(userId);
+        return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, bindRoleList);
+    }
+
+    /**
+     * <p>Title:      bindRole. </p>
+     * <p>Description 用户绑定角色</p>
+     *
+     * @param         userBindRoleDto UserBindRoleDto
+     * @return        Wrapper
+     * @Author        <a href="yangwensheng@meicai.cn"/>杨文生</a>
+     * @since     2019/4/11 17:23
+     */
+    @PostMapping(value = "/bindRole")
+    @ApiOperation(httpMethod = "POST", value = "用户绑定角色")
+    public Wrapper<?> bindRole(@RequestBody UserBindRoleDto userBindRoleDto) {
+        userRoleService.bindRole(userBindRoleDto);
+        return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE);
+    }
+
+
+    /**
+     * <p>Title:      getDepartmentList. </p>
+     * <p>Description 查询部门信息</p>
+     *
+     * @return  List<Department>
+     * @Author        <a href="yangwensheng@meicai.cn"/>杨文生</a>
+     * @since     2019/4/11 20:17
+     */
+    @PostMapping(value = "/getDepartmentList")
+    @ApiOperation(httpMethod = "POST", value = "查询部门信息")
+    public Wrapper<List<Department>> getDepartmentList() {
+        List<Department> departmentList = departmentService.selectAll();
+        return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE,departmentList);
+    }
+
 }

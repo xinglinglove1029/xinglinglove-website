@@ -22,13 +22,13 @@ public class RoleBindAuthorityDto implements Serializable {
 
 	private static final long serialVersionUID = 6518810380878732988L;
 	/**
-	 * 未绑定的用户集合
+	 * 资源集合
 	 */
-	@ApiModelProperty(value = "未绑定的用户集合")
+	@ApiModelProperty(value = "资源集合")
 	private List<ResourceDto> resourceInfoList;
 
 	/**
-	 * 已经绑定的用户集合
+	 * 角色id
 	 */
 	@ApiModelProperty(value = "角色id")
 	private String roleId;

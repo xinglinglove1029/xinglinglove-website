@@ -115,4 +115,5 @@ public interface RoleService extends BaseService<Role> {
     void roleBindResource(RoleBindAuthorityDto roleBindAuthority, AuthUserDto authUserDto);
 
     List<String> getBindResourceInfoByRoleId(String roleId);
+
 }

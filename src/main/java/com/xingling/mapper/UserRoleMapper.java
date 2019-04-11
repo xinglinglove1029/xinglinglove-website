@@ -37,4 +37,25 @@ public interface UserRoleMapper extends MyMapper<UserRole> {
      * @since 2018 /4/28 14:57
      */
     List<User> getBindUserByRoleId(String roleId);
+
+    /**
+     * <p>Title:      getRoleList. </p>
+     * <p>Description 查詢当前用户所绑定的角色信息</p>
+     *
+     * @return userId String
+     * @Author        <a href="yangwensheng@meicai.cn"/>杨文生</a>
+     * @since     2019/4/11 14:35
+     */
+    List<String> getBindRoleListByUserId(String userId);
+
+    /**
+     * <p>Title:      deleteByUserId. </p>
+     * <p>Description 刪除用戶和角色的關係</p>
+     *
+     * @param       userId   String
+     * @return
+     * @Author        <a href="yangwensheng@meicai.cn"/>杨文生</a>
+     * @since     2019/4/11 17:06
+     */
+    int deleteByUserId(String userId);
 }

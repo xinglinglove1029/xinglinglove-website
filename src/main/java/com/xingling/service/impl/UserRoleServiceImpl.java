@@ -2,13 +2,16 @@ package com.xingling.service.impl;
 
 import com.google.common.collect.Lists;
 import com.xingling.base.BaseServiceImpl;
+import com.xingling.exception.BusinessException;
 import com.xingling.mapper.UserRoleMapper;
 import com.xingling.model.domain.Authority;
 import com.xingling.model.domain.User;
 import com.xingling.model.domain.UserRole;
 import com.xingling.model.dto.RoleDto;
+import com.xingling.model.dto.UserBindRoleDto;
 import com.xingling.service.AuthorityService;
 import com.xingling.service.UserRoleService;
+import com.xingling.service.UserService;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
@@ -34,6 +37,9 @@ public class UserRoleServiceImpl extends BaseServiceImpl<UserRole> implements Us
     @Resource
     private UserRoleMapper userRoleMapper;
 
+    @Resource
+    private UserService userService;
+
     @Override
     public Collection<GrantedAuthority> loadUserAuthorities(String userId) {
         List<Authority> ownAuthList = authorityService.getOwnAuthority(userId);
@@ -53,5 +59,40 @@ public class UserRoleServiceImpl extends BaseServiceImpl<UserRole> implements Us
     @Override
     public List<User> getBindUserByRoleId(String roleId) {
         return userRoleMapper.getBindUserByRoleId(roleId);
+    }
+
+    @Override
+    public List<String> getBindRoleListByUserId(String userId) {
+        return userRoleMapper.getBindRoleListByUserId(userId);
+    }
+
+    @Override
+    public void bindRole(UserBindRoleDto userBindRoleDto) {
+        // 校验用户信息
+        User user = userService.selectByKey(userBindRoleDto.getUserId());
+        if(user == null){
+            throw  new BusinessException("查询用户信息不存在");
+        }
+        if(userBindRoleDto.getRoleIdList().size() == 0){
+            throw  new BusinessException("绑定的角色不能为空");
+        }
+        // 删除原来的关系
+        userRoleMapper.deleteByUserId(userBindRoleDto.getUserId());
+        List<UserRole> userRoles = this.bulidUserRoleInfo(userBindRoleDto);
+        // 批量保存
+        userRoleMapper.insertList(userRoles);
+    }
+
+    private List<UserRole> bulidUserRoleInfo(UserBindRoleDto userBindRoleDto){
+        List<UserRole>  list = Lists.newArrayList();
+        UserRole userRole = null;
+        List<String> roleIdList = userBindRoleDto.getRoleIdList();
+        for (String roleId : roleIdList) {
+            userRole = new UserRole();
+            userRole.setRoleId(roleId);
+            userRole.setUserId(userBindRoleDto.getUserId());
+            list.add(userRole);
+        }
+        return list;
     }
 }

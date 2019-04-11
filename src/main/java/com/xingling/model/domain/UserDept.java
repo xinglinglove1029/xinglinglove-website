@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.io.Serializable;
 
 @Data
@@ -22,5 +23,8 @@ public class UserDept implements Serializable {
      */
     @Column(name = "dept_id")
     private String deptId;
+
+    @Transient
+    private String deptName;
 
 }

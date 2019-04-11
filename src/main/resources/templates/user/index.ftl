@@ -48,6 +48,11 @@
                     <span v-else>{{scope.row.realName}}</span>
                 </template>
             </el-table-column>
+            <el-table-column label="部门"  align="center" prop="deptName">
+                <template slot-scope="scope">
+                    <span>{{scope.row.deptName}}</span>
+                </template>
+            </el-table-column>
             <el-table-column class-name="status-col"  label="性别"  align="center" prop="sex">
                 <template slot-scope="scope">
                     <el-tag :type="scope.row.sex">{{scope.row.sex | sexFilter}}</el-tag>
@@ -112,6 +117,16 @@
                 <el-form-item label="手机号码" prop="cellPhone">
                     <el-input v-model.trim="user.cellPhone"/>
                 </el-form-item>
+                <el-form-item label="部门" prop="deptId">
+                    <el-select v-model="user.deptId" filterable clearable  placeholder="请选择部门">
+                        <el-option
+                                v-for="item in deptList"
+                                :key="item.id"
+                                :label="item.deptName"
+                                :value="item.id">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
                 <el-form-item label="邮箱" prop="email">
                     <el-input v-model.trim="user.email"/>
                 </el-form-item>
@@ -122,6 +137,18 @@
                 <el-button v-else type="primary" @click="updateUser">确 定</el-button>
             </div>
         </el-dialog>
+        <!--用戶綁定角色模态框-->
+        <el-dialog title="用戶綁定角色" :visible.sync="bingRoleDialogFormVisible">
+            <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
+            <div style="margin: 15px 0;"></div>
+            <el-checkbox-group v-model="checkedRoleId" @change="handleCheckedRoleChange">
+                <el-checkbox v-for="role in roleList" :label="role.id" :key="role.id">{{role.roleName}}</el-checkbox>
+            </el-checkbox-group>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="bingRoleDialogFormVisible = false">取 消</el-button>
+                <el-button  type="primary" @click="saveUserRoleData">确 定</el-button>
+            </div>
+        </el-dialog>·
     </div>
 </div>
 <#include "../common/scripts.ftl">
@@ -187,6 +214,10 @@
                 }
             };
             return {
+                checkedRoleId: [],
+                bindUserId: [],
+                roleList: [],
+                deptList: [],
                 tableData: null,
                 listLoading: true,
                 total: 0,
@@ -206,6 +237,9 @@
                         value: '女'
                     }
                 ],
+                isIndeterminate: true,
+                checkAll: false,
+                bingRoleDialogFormVisible: false,
                 dialogFormVisible: false,
                 dialogStatus: '',
                 textMap: {
@@ -222,6 +256,7 @@
                     sex: '1',
                     birthday: '',
                     cellPhone: '',
+                    deptId: '',
                     email: ''
                 },
                 rules: {
@@ -248,6 +283,7 @@
                         { required: true, message: '邮箱不能为空', trigger: 'blur' },
                         { validator: validateEmail, trigger: 'blur' }
                     ],
+                    deptId: [{ required: true, message: '部门不能为空', trigger: 'blur' }],
                     birthday: [{ required: true, message: '出生日期不能为空', trigger: 'change' }]
                 }
             }
@@ -260,7 +296,7 @@
                         value = '男';
                         break;
                     case '2':
-                        value = '女';
+                        value = '女';getDepartmentList
                         break;
                 }
                 return value
@@ -275,8 +311,27 @@
         },
         created() {
             this.fetchData();
+            this.getDepartmentList();
         },
         methods: {
+            getDepartmentList() {
+                let _this = this;
+                _this.$http({
+                    method: 'POST',
+                    url: '/user/getDepartmentList'
+                }).then((res) => {
+                    if(res.data.code === 200){
+                        _this.deptList = res.data.result;
+                    }else{
+                        _this.$message({
+                            type: 'warning',
+                            message: res.data.message
+                        })
+                    }
+                }).catch((err) => {
+                    console.log(err);
+                });
+            },
             fetchData() {
                 let _this = this;
                 _this.listLoading = true;
@@ -509,12 +564,38 @@
             },
             bindRole(row){
                 let _this = this;
+                _this.bingRoleDialogFormVisible = true;
+                _this.bindUserId = row.id;
+                _this.$http({
+                    method: 'POST',
+                    url: '/user/getRoleList',
+                }).then((res) => {
+                    if(res.data.code === 200){
+                        _this.roleList = res.data.result;
+                    }else{
+                        _this.$message({
+                            type: 'warning',
+                            message: res.data.message
+                        })
+                    }
+                }).catch((err) => {
+                    console.log(err);
+                });
+                _this.getBindRoleListByUserId();
+
+            },
+            saveUserRoleData(){
+                let _this = this;
+                let param = {};
+                param.userId = _this.bindUserId;
+                param.roleIdList = _this.checkedRoleId;
                 _this.$http({
                     method: 'POST',
                     url: '/user/bindRole',
-                    data: row.id
+                    data: param
                 }).then((res) => {
                     if(res.data.code === 200){
+                        _this.bingRoleDialogFormVisible = false;
                         _this.$message({
                             type: 'success',
                             message: '绑定成功!'
@@ -528,6 +609,40 @@
                 }).catch((err) => {
                     console.log(err);
                 });
+            },
+            getBindRoleListByUserId(){
+                let _this = this;
+                _this.$http({
+                    method: 'POST',
+                    url: '/user/getBindRoleListByUserId',
+                    data: _this.bindUserId
+                }).then((res) => {
+                    if(res.data.code === 200){
+                        _this.checkedRoleId = res.data.result;
+                    }else{
+                        _this.$message({
+                            type: 'warning',
+                            message: res.data.message
+                        })
+                    }
+                }).catch((err) => {
+                    console.log(err);
+                });
+            },
+            handleCheckAllChange(val){
+                let _this = this;
+                let allRoleIdList = [];
+                _this.roleList.forEach((item) => {
+                    allRoleIdList.push(item.id);
+                });
+                _this.checkedRoleId = val ? allRoleIdList : [];
+                _this.isIndeterminate = false;
+            },
+            handleCheckedRoleChange(value){
+                let _this = this;
+                let checkedCount = value.length;
+                _this.checkAll = checkedCount === _this.roleList.length;
+                _this.isIndeterminate = checkedCount > 0 && checkedCount < _this.roleList.length
             }
         }
     });

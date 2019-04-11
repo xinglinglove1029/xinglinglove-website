@@ -3,7 +3,10 @@ package com.xingling.mapper;
 import com.xingling.base.MyMapper;
 import com.xingling.model.domain.UserDept;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * Title: DeptRoleMapper<br>;
@@ -17,4 +20,5 @@ import org.springframework.stereotype.Component;
 @Mapper
 @Component
 public interface UserDeptMapper extends MyMapper<UserDept> {
+    List<UserDept> queryDeptByUserIds(@Param("userIds") List<String> userIds);
 }

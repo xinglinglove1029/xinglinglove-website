@@ -17,4 +17,13 @@
     -->
     user_id, dept_id
   </sql>
+    <select id="queryDeptByUserIds" resultType="com.xingling.model.domain.UserDept">
+      SELECT aa.dept_id as deptId,aa.user_id as userId,bb.dept_name as deptName from xl_user_dept aa JOIN xl_dept bb on aa.dept_id = bb.id
+      <if test="userIds != null and userIds.size() > 0 ">
+        AND user_id IN
+        <foreach collection="userIds" item="item" index="index" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
+    </select>
 </mapper>

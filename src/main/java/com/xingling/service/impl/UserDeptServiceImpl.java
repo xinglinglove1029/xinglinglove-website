@@ -2,9 +2,13 @@ package com.xingling.service.impl;
 
 
 import com.xingling.base.BaseServiceImpl;
+import com.xingling.mapper.UserDeptMapper;
 import com.xingling.model.domain.UserDept;
 import com.xingling.service.UserDeptService;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * Title: DeptRoleServiceImpl<br>;
@@ -17,4 +21,12 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class UserDeptServiceImpl extends BaseServiceImpl<UserDept> implements UserDeptService {
+
+    @Resource
+    private UserDeptMapper userDeptMapper;
+
+    @Override
+    public List<UserDept> queryDeptByUserIds(List<String> userIds) {
+        return userDeptMapper.queryDeptByUserIds(userIds);
+    }
 }

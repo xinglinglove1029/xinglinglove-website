@@ -6,9 +6,11 @@ import com.xingling.enums.UserStatusEnums;
 import com.xingling.exception.BusinessException;
 import com.xingling.mapper.UserMapper;
 import com.xingling.model.domain.User;
+import com.xingling.model.domain.UserDept;
 import com.xingling.model.domain.UserRole;
 import com.xingling.model.dto.AuthUserDto;
 import com.xingling.model.dto.RoleDto;
+import com.xingling.service.UserDeptService;
 import com.xingling.service.UserRoleService;
 import com.xingling.service.UserService;
 import com.xingling.util.DateUtil;
@@ -20,7 +22,9 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * <p>Title:	  UserServiceImpl <br/> </p>
@@ -38,6 +42,9 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
 
 	@Resource
 	private UserRoleService userRoleService;
+
+	@Resource
+	private UserDeptService userDeptService;
 
 	private static final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
@@ -60,7 +67,16 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
 
 	@Override
 	public List<User> queryListPage(User user) {
-		return userMapper.queryListPage(user);
+		List<User> userList = userMapper.queryListPage(user);
+		List<String> userIds = userList.stream().map(User::getId).collect(Collectors.toList());
+		List<UserDept> userDeptList = userDeptService.queryDeptByUserIds(userIds);
+		Map<String, UserDept> depatMap = userDeptList.stream().collect(Collectors.toMap(UserDept :: getUserId, f -> f));
+		userList.forEach(f ->{
+			UserDept userDept = depatMap.get(f.getId());
+			f.setDeptId(userDept.getDeptId());
+			f.setDeptName(userDept.getDeptName());
+		});
+		return userList;
 	}
 
 	@Override
@@ -134,11 +150,25 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
 		user.setUpdateTime(new Date());
 		int age = DateUtil.getAgeByBirth(user.getBirthday());
 		user.setAge(age);
-		return userMapper.updateByPrimaryKeySelective(user);
+		userMapper.updateByPrimaryKeySelective(user);
+
+		// 删除用户部门绑定的关系
+		UserDept deleteUserDept = new UserDept();
+		deleteUserDept.setUserId(user.getId());
+		userDeptService.delete(deleteUserDept);
+
+		// 保存用户部门关系
+		UserDept userDept = new UserDept();
+		userDept.setDeptId(user.getDeptId());
+		userDept.setUserId(user.getId());
+		return userDeptService.save(userDept);
 	}
 
 	@Override
 	public int saveUserInfo(User user, AuthUserDto authUserDto) {
+		if(StringUtils.isEmpty(user.getDeptId())){
+			throw new BusinessException("选择的部门不能为空");
+		}
 		String hash = encoder.encode(user.getPassword());
 		user.setPassword(hash);
 		user.setCreator(authUserDto.getRealName());
@@ -147,7 +177,12 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
 		user.setUpdaterId(authUserDto.getUserId());
 		int age = DateUtil.getAgeByBirth(user.getBirthday());
 		user.setAge(age);
-		return userMapper.insertSelective(user);
+		userMapper.insertSelective(user);
+		// 保存用户部门关系
+		UserDept userDept = new UserDept();
+		userDept.setDeptId(user.getDeptId());
+		userDept.setUserId(user.getId());
+		return userDeptService.save(userDept);
 	}
 
 	@Override

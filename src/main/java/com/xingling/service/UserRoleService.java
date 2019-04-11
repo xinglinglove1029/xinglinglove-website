@@ -4,6 +4,7 @@ import com.xingling.base.BaseService;
 import com.xingling.model.domain.User;
 import com.xingling.model.domain.UserRole;
 import com.xingling.model.dto.RoleDto;
+import com.xingling.model.dto.UserBindRoleDto;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
@@ -52,4 +53,25 @@ public interface UserRoleService extends BaseService<UserRole> {
      * @since 2018 /4/28 14:55
      */
     List<User> getBindUserByRoleId(String roleId);
+
+    /**
+     * <p>Title:      getRoleList. </p>
+     * <p>Description 查詢当前用户所绑定的角色信息</p>
+     *
+     * @return userId String
+     * @Author        <a href="yangwensheng@meicai.cn"/>杨文生</a>
+     * @since     2019/4/11 14:35
+     */
+    List<String> getBindRoleListByUserId(String userId);
+
+    /**
+     * <p>Title:      bindRole. </p>
+     * <p>Description 用户绑定角色</p>
+     *
+     * @param       userBindRoleDto UserBindRoleDto
+     * @return
+     * @Author        <a href="yangwensheng@meicai.cn"/>杨文生</a>
+     * @since     2019/4/11 14:55
+     */
+    void bindRole(UserBindRoleDto userBindRoleDto);
 }

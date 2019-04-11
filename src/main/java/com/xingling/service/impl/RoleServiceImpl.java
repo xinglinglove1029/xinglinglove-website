@@ -165,6 +165,10 @@ public class RoleServiceImpl extends BaseServiceImpl<Role> implements RoleServic
             throw new BusinessException("角色信息不存在");
         }
 
+        if(roleBindAuthority.getResourceInfoList().size() == 0){
+            throw  new BusinessException("选择的权限不能为空");
+        }
+
         // 删除该角色所绑定的菜单和权限关系
         roleMenuService.batchDeleteByRoleId(roleBindAuthority.getRoleId());
         roleAuthorityService.batchDeleteByRoleId(roleBindAuthority.getRoleId());
@@ -230,4 +234,5 @@ public class RoleServiceImpl extends BaseServiceImpl<Role> implements RoleServic
         resourceIdList.addAll(authorityIdList);
         return resourceIdList;
     }
+
 }

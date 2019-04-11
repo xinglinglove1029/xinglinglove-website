@@ -3,6 +3,8 @@ package com.xingling.service;
 import com.xingling.base.BaseService;
 import com.xingling.model.domain.UserDept;
 
+import java.util.List;
+
 /**
  * Title: DeptRoleService<br>;
  * Description: 部门角色<br>;
@@ -13,4 +15,5 @@ import com.xingling.model.domain.UserDept;
  * 2018/11/21 18:29
  */
 public interface UserDeptService extends BaseService<UserDept> {
+    List<UserDept> queryDeptByUserIds(List<String> userIds);
 }

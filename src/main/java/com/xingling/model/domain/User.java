@@ -98,5 +98,9 @@ public class User extends BaseEntiy implements Serializable {
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
 	private Date lastPasswordResetDate;
 
+	@Transient
+	private String deptId;
 
+	@Transient
+	private String deptName;
 }
