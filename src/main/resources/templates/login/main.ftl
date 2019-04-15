@@ -354,8 +354,7 @@
                 let _this = this;
                 _this.$http({
                     method: 'POST',
-                    url: "/menu/getMenuTree",
-                    data: '1'
+                    url: "/getMenuTreeByUserId"
                 }).then(function (response) {
                     console.log(response);
                     _this.leftMenuTreeList = response.data.result;

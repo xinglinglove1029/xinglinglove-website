@@ -99,4 +99,15 @@ public interface MenuService extends BaseService<Menu> {
      * @since 2018 /4/27 18:23
      */
     Menu getMenuById(String menuId);
+
+    /**
+     * <p>Title:      getMenuTreeByUserId. </p>
+     * <p>Description 查询当前登录人拥有的菜单树</p>
+     *
+     * @param       roleIdList  String
+     * @return       List<MenuTreeVo>
+     * @Author        <a href="yangwensheng@meicai.cn"/>杨文生</a>
+     * @since     2019/4/15 12:01
+     */
+    List<MenuTreeVo> getMenuTreeByUserId(List<String> roleIdList);
 }

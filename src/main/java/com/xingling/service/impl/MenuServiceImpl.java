@@ -9,6 +9,7 @@ import com.xingling.model.domain.Menu;
 import com.xingling.model.dto.AuthUserDto;
 import com.xingling.model.vo.MenuTreeVo;
 import com.xingling.service.MenuService;
+import com.xingling.service.RoleMenuService;
 import com.xingling.util.TreeUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -33,7 +34,11 @@ public class MenuServiceImpl extends BaseServiceImpl<Menu> implements MenuServic
     
     @Resource
     private MenuMapper menuMapper;
-    
+
+    @Resource
+    private RoleMenuService roleMenuService;
+
+
     @Override
     public int saveMenuInfo(Menu menu, AuthUserDto authUserDto) {
         Menu querMenu = new Menu();
@@ -154,5 +159,28 @@ public class MenuServiceImpl extends BaseServiceImpl<Menu> implements MenuServic
     @Override
     public Menu getMenuById(String menuId) {
         return menuMapper.selectByPrimaryKey(menuId);
+    }
+
+    @Override
+    public List<MenuTreeVo> getMenuTreeByUserId(List<String> roleIds) {
+        List<Menu> menuList = roleMenuService.getMenuByRoleIds(roleIds);
+        Map<String, String> menuMap = menuList.stream().collect(Collectors.toMap(Menu::getId, Menu::getMenuName));
+        List<MenuTreeVo> trees = Lists.newArrayList();
+        MenuTreeVo node = null;
+        for (Menu menu : menuList) {
+            node = new MenuTreeVo();
+            BeanUtils.copyProperties(menu, node);
+            node.setParentId(menu.getPid());
+            String parentMenuName = menuMap.get(menu.getPid());
+            node.setParentMenuName(parentMenuName);
+            if("root".equals(menu.getMenuCode())){
+                node.setDisabled(true);
+            }else{
+                node.setDisabled(false);
+            }
+            node.setNumber(menu.getNumber());
+            trees.add(node);
+        }
+        return TreeUtil.bulid(trees,Constants.MENU_ROOT) ;
     }
 }

@@ -2,11 +2,13 @@ package com.xingling.service.impl;
 
 import com.xingling.base.BaseServiceImpl;
 import com.xingling.mapper.RoleMenuMapper;
+import com.xingling.model.domain.Menu;
 import com.xingling.model.domain.RoleMenu;
 import com.xingling.service.RoleMenuService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * <p>Title:	  spring-cloud-koala <br/> </p>
@@ -25,5 +27,10 @@ public class RoleMenuServiceImpl extends BaseServiceImpl<RoleMenu> implements Ro
     @Override
     public int batchDeleteByRoleId(String roleId) {
         return roleMenuMapper.batchDeleteByRoleId(roleId);
+    }
+
+    @Override
+    public List<Menu> getMenuByRoleIds(List<String> roleIds) {
+        return roleMenuMapper.getMenuByRoleIds(roleIds);
     }
 }

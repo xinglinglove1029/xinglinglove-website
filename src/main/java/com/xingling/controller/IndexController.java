@@ -1,12 +1,21 @@
 package com.xingling.controller;
 
+import com.xingling.common.WrapMapper;
+import com.xingling.common.Wrapper;
 import com.xingling.model.domain.Role;
+import com.xingling.model.vo.MenuTreeVo;
+import com.xingling.service.MenuService;
 import com.xingling.util.SecurityUserUtils;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Resource;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>Title:	  xinglinglove-website <br/> </p>
@@ -18,6 +27,9 @@ import java.util.Collection;
  */
 @RestController
 public class IndexController {
+
+    @Resource
+    private MenuService menuService;
 
     @GetMapping(value = "/index")
     public ModelAndView index() {
@@ -34,5 +46,14 @@ public class IndexController {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("login/home");
         return modelAndView;
+    }
+
+    @PostMapping(value = "/getMenuTreeByUserId")
+    @ApiOperation(httpMethod = "POST", value = "查询当前登录人拥有的菜单树")
+    public Wrapper<List<MenuTreeVo>> getMenuTreeByUserId() {
+        Collection<Role> roleList = SecurityUserUtils.getUser().getRoles();
+        List<String> roleIds = roleList.stream().map(Role::getId).collect(Collectors.toList());
+        List<MenuTreeVo> menuTreeVos = menuService.getMenuTreeByUserId(roleIds);
+        return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, menuTreeVos);
     }
 }

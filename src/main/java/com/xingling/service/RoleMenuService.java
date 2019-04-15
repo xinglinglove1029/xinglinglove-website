@@ -2,7 +2,10 @@ package com.xingling.service;
 
 
 import com.xingling.base.BaseService;
+import com.xingling.model.domain.Menu;
 import com.xingling.model.domain.RoleMenu;
+
+import java.util.List;
 
 /**
  * <p>Title:      RoleMenuService. </p>
@@ -16,4 +19,6 @@ import com.xingling.model.domain.RoleMenu;
 public interface RoleMenuService extends BaseService<RoleMenu> {
 
     int batchDeleteByRoleId(String roleId);
+
+    List<Menu> getMenuByRoleIds(List<String> roleIds);
 }

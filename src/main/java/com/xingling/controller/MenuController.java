@@ -53,7 +53,7 @@ public class MenuController extends BaseController {
      * @since 2018 /4/27 11:54
      */
     @PostMapping(value = "/getMenuTree")
-    @ApiOperation(httpMethod = "POST", value = "分页查询权限列表")
+    @ApiOperation(httpMethod = "POST", value = "查询菜单树")
     public Wrapper<List<MenuTreeVo>> getMenuTree(@RequestBody String menuId) {
         List<MenuTreeVo> menuTreeVos = menuService.getMenuTree(menuId);
         return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, menuTreeVos);
