@@ -50,7 +50,20 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
 
 	@Override
 	public User selectUserByUserName(String username) {
-		return userMapper.loadUserByUsername(username);
+		User user = userMapper.loadUserByUsername(username);
+		if(Objects.isNull(user)){
+			throw new BusinessException("根据用户名查询用户信息不存在");
+		}
+		// 查询所属的部门
+		UserDept userDept = new UserDept();
+		userDept.setUserId(user.getId());
+		UserDept dept = userDeptService.selectOne(userDept);
+		if(Objects.isNull(userDept)){
+			throw new BusinessException("查询用户所属部门不存在");
+		}
+		user.setDeptId(dept.getDeptId());
+		user.setDeptName(dept.getDeptName());
+		return user;
 	}
 
 	@Override
@@ -81,6 +94,10 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
 
 	@Override
 	public int deleteUserById(String id, AuthUserDto authUserDto) {
+		String currentUserId = authUserDto.getUserId();
+		if(currentUserId.equals(id)){
+			throw new BusinessException("自己不能删除自己");
+		}
 		User queryUser = new User();
 		queryUser.setId(id);
 		queryUser.setDel(Constants.DELETE_NO);
@@ -97,6 +114,10 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
 
 	@Override
 	public int disableUserById(String id, AuthUserDto authUserDto) {
+		String currentUserId = authUserDto.getUserId();
+		if(currentUserId.equals(id)){
+			throw new BusinessException("自己不能禁用自己");
+		}
 		User queryUser = new User();
 		queryUser.setId(id);
 		queryUser.setDel(Constants.DELETE_NO);

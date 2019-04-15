@@ -1,6 +1,7 @@
 package com.xingling.mapper;
 
 import com.xingling.base.MyMapper;
+import com.xingling.model.domain.Role;
 import com.xingling.model.domain.User;
 import com.xingling.model.domain.UserRole;
 import com.xingling.model.dto.RoleDto;
@@ -46,7 +47,7 @@ public interface UserRoleMapper extends MyMapper<UserRole> {
      * @Author        <a href="yangwensheng@meicai.cn"/>杨文生</a>
      * @since     2019/4/11 14:35
      */
-    List<String> getBindRoleListByUserId(String userId);
+    List<Role> getBindRoleListByUserId(String userId);
 
     /**
      * <p>Title:      deleteByUserId. </p>

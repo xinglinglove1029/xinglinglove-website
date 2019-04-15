@@ -1,6 +1,6 @@
 package com.xingling.util;
 
-import com.xingling.model.domain.User;
+import com.xingling.model.domain.SecurityUser;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -39,9 +39,9 @@ public class SecurityUserUtils {
     }
 
 
-    public static User getUser() {
+    public static SecurityUser getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return (User) authentication.getPrincipal();
+        return (SecurityUser) authentication.getPrincipal();
     }
 
 

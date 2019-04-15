@@ -633,6 +633,10 @@
                     if(res.data.code === 200){
                         _this.bindAuthorityDialogVisible = false;
                         _this.listLoading = false;
+                        _this.$message({
+                            type: 'success',
+                            message: '绑定成功!'
+                        })
                     }else{
                         _this.$message({
                             type: 'warning',

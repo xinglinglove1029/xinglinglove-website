@@ -19,7 +19,7 @@
         <div class="filter-container">
             <el-button class="filter-item" type="primary"  @click="newAdd" >添加</el-button>
             <el-button class="filter-item" type="primary"  @click="updateDept" >修改</el-button>
-            <el-button class="filter-item" type="primary"  @click="deleteDept" >删除</el-button>
+<#--            <el-button class="filter-item" type="primary"  @click="deleteDept" >删除</el-button>-->
         </div>
         <div class="tree-container">
             <el-row :gutter="24">

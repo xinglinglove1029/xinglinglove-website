@@ -1,11 +1,11 @@
 package com.xingling.service.impl;
 
+import com.xingling.model.domain.Role;
 import com.xingling.model.domain.SecurityUser;
 import com.xingling.model.domain.User;
 import com.xingling.service.UserRoleService;
 import com.xingling.service.UserService;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -31,12 +31,13 @@ public class SecurityUserDetailsService implements UserDetailsService{
     private UserRoleService userRoleService;
 
     @Override
-    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
+    public SecurityUser loadUserByUsername(String userName) throws UsernameNotFoundException {
         User user = userService.selectUserByUserName(userName);
         if (user == null) {
             throw new UsernameNotFoundException(userName);
         }
         Collection<GrantedAuthority> grantedAuthorities = userRoleService.loadUserAuthorities(user.getId());
-        return new SecurityUser(user, grantedAuthorities);
+        Collection<Role> roles = userRoleService.getBindRoleListByUserId(user.getId());
+        return new SecurityUser(user, grantedAuthorities,roles);
     }
 }

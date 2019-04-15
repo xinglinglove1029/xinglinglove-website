@@ -27,6 +27,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>Title:	  UserController. </p>
@@ -57,6 +58,7 @@ public class UserController extends BaseController {
     public ModelAndView index() {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("user/index");
+        modelAndView.addObject("userId",SecurityUserUtils.getUser().getId());
         return modelAndView;
     }
 
@@ -253,8 +255,9 @@ public class UserController extends BaseController {
     @PostMapping(value = "/getBindRoleListByUserId")
     @ApiOperation(httpMethod = "POST", value = "查询角色信息")
     public Wrapper<List<String>> getBindRoleListByUserId(@RequestBody String userId) {
-        List<String> bindRoleList = userRoleService.getBindRoleListByUserId(userId);
-        return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, bindRoleList);
+        List<Role> bindRoleList = userRoleService.getBindRoleListByUserId(userId);
+        List<String> roleIds = bindRoleList.stream().map(Role::getId).collect(Collectors.toList());
+        return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, roleIds);
     }
 
     /**

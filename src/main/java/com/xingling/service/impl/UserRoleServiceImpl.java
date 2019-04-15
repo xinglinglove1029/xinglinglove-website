@@ -5,6 +5,7 @@ import com.xingling.base.BaseServiceImpl;
 import com.xingling.exception.BusinessException;
 import com.xingling.mapper.UserRoleMapper;
 import com.xingling.model.domain.Authority;
+import com.xingling.model.domain.Role;
 import com.xingling.model.domain.User;
 import com.xingling.model.domain.UserRole;
 import com.xingling.model.dto.RoleDto;
@@ -62,7 +63,7 @@ public class UserRoleServiceImpl extends BaseServiceImpl<UserRole> implements Us
     }
 
     @Override
-    public List<String> getBindRoleListByUserId(String userId) {
+    public List<Role> getBindRoleListByUserId(String userId) {
         return userRoleMapper.getBindRoleListByUserId(userId);
     }
 

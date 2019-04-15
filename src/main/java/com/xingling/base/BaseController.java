@@ -1,6 +1,8 @@
 package com.xingling.base;
 
+import com.xingling.model.domain.SecurityUser;
 import com.xingling.model.dto.AuthUserDto;
+import com.xingling.util.SecurityUserUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -33,6 +35,10 @@ public class BaseController {
 
 	protected AuthUserDto getLoginAuthDto() {
         AuthUserDto authUserDto = new AuthUserDto();
+		SecurityUser user = SecurityUserUtils.getUser();
+		authUserDto.setUserId(user.getUserId());
+		authUserDto.setUserName(user.getUserName());
+		authUserDto.setRealName(user.getRealName());
 //        Object principal = ThreadLocalMap.get(Constants.TOKEN_AUTH_INFO);
 //		String userId = Reflections.getFieldValue(principal, "userId").toString();
 //		String userName = Reflections.getFieldValue(principal, "userName").toString();

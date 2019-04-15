@@ -312,7 +312,7 @@
                 activeIndex: '80001',
                 leftMenuTreeList: [],
                 currentUserName: '',
-                currentRoleName: '',
+                currentRoleName: '${roleNameList}',
                 currentPhone: '',
                 currentEmail: '',
                 mapTabs:{},

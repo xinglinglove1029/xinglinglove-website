@@ -1,8 +1,12 @@
 package com.xingling.controller;
 
+import com.xingling.model.domain.Role;
+import com.xingling.util.SecurityUserUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.util.Collection;
 
 /**
  * <p>Title:	  xinglinglove-website <br/> </p>
@@ -19,6 +23,9 @@ public class IndexController {
     public ModelAndView index() {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("login/main");
+        Collection<Role> roles = SecurityUserUtils.getUser().getRoles();
+        String roleNameList = roles.stream().map(Role::getRoleName).reduce((x, y) -> x + "," + y).get();
+        modelAndView.addObject("roleNameList",roleNameList);
         return modelAndView;
     }
 

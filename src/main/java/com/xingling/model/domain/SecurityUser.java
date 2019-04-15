@@ -14,7 +14,9 @@ public class SecurityUser extends User implements UserDetails {
 
 	private Collection<GrantedAuthority> authorities;
 
-	public SecurityUser(User user, Collection<GrantedAuthority> grantedAuthorities) {
+	private Collection<Role> roles;
+
+	public SecurityUser(User user, Collection<GrantedAuthority> grantedAuthorities,Collection<Role> roles) {
 		if (user != null) {
 			this.setUserId(user.getId());
 			this.setUserName(user.getUserName());
@@ -26,9 +28,17 @@ public class SecurityUser extends User implements UserDetails {
 			this.setSex(user.getSex());
 			this.setLastLoginDate(user.getLastLoginDate());
 			this.authorities = grantedAuthorities;
+			this.roles = roles;
 		}
 	}
 
+	public Collection<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Collection<Role> roles) {
+		this.roles = roles;
+	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
