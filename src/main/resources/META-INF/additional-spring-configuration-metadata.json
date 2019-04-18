@@ -1,0 +1,53 @@
+{
+  "properties": [
+    {
+      "name": "customerDataSource.master.username",
+      "type": "java.lang.String",
+      "description": "Description for customerDataSource.master.username."
+    },
+    {
+      "name": "customerDataSource.master.password",
+      "type": "java.lang.String",
+      "description": "Description for customerDataSource.master.password."
+    },
+    {
+      "name": "customerDataSource.master.driver-class-name",
+      "type": "java.lang.String",
+      "description": "Description for customerDataSource.master.driver-class-name."
+    },
+    {
+      "name": "customerDataSource.master.jdbc-url",
+      "type": "java.lang.String",
+      "description": "Description for customerDataSource.master.jdbc-url."
+    },
+    {
+      "name": "customerDataSource.slaver.username",
+      "type": "java.lang.String",
+      "description": "Description for customerDataSource.slaver.username."
+    },
+    {
+      "name": "customerDataSource.slaver.password",
+      "type": "java.lang.String",
+      "description": "Description for customerDataSource.slaver.password."
+    },
+    {
+      "name": "customerDataSource.slaver.driver-class-name",
+      "type": "java.lang.String",
+      "description": "Description for customerDataSource.slaver.driver-class-name."
+    },
+    {
+      "name": "customerDataSource.slaver.jdbc-url",
+      "type": "java.lang.String",
+      "description": "Description for customerDataSource.slaver.jdbc-url."
+    },
+    {
+      "name": "customerDataSource.read",
+      "type": "java.lang.String",
+      "description": "Description for customerDataSource.read."
+    },
+    {
+      "name": "customerDataSource.write",
+      "type": "java.lang.String",
+      "description": "Description for customerDataSource.write."
+    }
+  ] }
