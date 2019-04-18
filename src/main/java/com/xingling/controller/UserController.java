@@ -99,7 +99,7 @@ public class UserController extends BaseController {
     }
 
     /**
-     * <p>Title:      currentUser. </p>
+     * <p>Title:      getCurrentUser. </p>
      * <p>Description 获取当前用户信息</p>
      *
      * @param
@@ -107,7 +107,7 @@ public class UserController extends BaseController {
      * @Author <a href="190332447@qq.com"/>杨文生</a>
      * @since 2018 /2/20 14:10
      */
-    @GetMapping(value = "/currentUser")
+    @GetMapping(value = "/getCurrentUser")
     @ApiOperation(httpMethod = "GET", value = "获取当前用户信息")
     public Wrapper<AuthUserDto> getCurrentUser() {
         String loginName = SecurityUserUtils.getUser().getUserName();
