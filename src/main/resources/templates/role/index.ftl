@@ -161,6 +161,7 @@
                                 default-expand-all
                                 node-key="id"
                                 highlight-current
+                                check-strictly
                                 :default-checked-keys="checkedKeys"
                                 accordion
                                 :filter-node-method="filterNode"
@@ -614,6 +615,7 @@
             saveAuthorityInfo(){
                 let _this = this;
                 let checkedNodes = _this.$refs.authorityTree.getCheckedNodes();
+
                 _this.checkedNodeList = [];
                 checkedNodes.forEach((item) => {
                     let obj = {};

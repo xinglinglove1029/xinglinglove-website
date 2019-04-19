@@ -16,7 +16,7 @@ spring:
 #      validation-query: SELECT 1 FROM DUAL
 #      test-while-idle: true
 #      test-on-borrow: false
-#      test-on-return: false
+#      test-on-return: falsef
 #      pool-prepared-statements: true
 #      max-pool-prepared-statement-per-connection-size: 20
 #      filters: stat,wall

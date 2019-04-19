@@ -31,6 +31,7 @@ public class IndexController {
     @Resource
     private MenuService menuService;
 
+//    @AccessLimit(seconds=5, maxCount=5)
     @GetMapping(value = "/index")
     public ModelAndView index() {
         ModelAndView modelAndView = new ModelAndView();

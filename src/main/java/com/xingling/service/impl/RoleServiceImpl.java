@@ -180,7 +180,7 @@ public class RoleServiceImpl extends BaseServiceImpl<Role> implements RoleServic
         List<String> menuIdList = menuResourceInfo.stream().map(ResourceDto::getResourceId).collect(Collectors.toList());
 
         // 过滤出按钮权限
-        List<ResourceDto> authorityResourceInfo = resourceInfoList.stream().filter(f -> "1".equals(f.getType())).collect(Collectors.toList());
+        List<ResourceDto> authorityResourceInfo = resourceInfoList.stream().filter(f -> "2".equals(f.getType())).collect(Collectors.toList());
         List<String> authorityIdList = authorityResourceInfo.stream().map(ResourceDto::getResourceId).collect(Collectors.toList());
 
         List<RoleMenu> roleMenuList = this.buildMenuRoleInfo(menuIdList, roleBindAuthority.getRoleId());
