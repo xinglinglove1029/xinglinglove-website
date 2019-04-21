@@ -42,7 +42,7 @@
                     <span>{{scope.row.userName}}</span>
                 </template>
             </el-table-column>
-            <el-table-column label="真实姓名"  align="center" prop="realName">
+            <el-table-column label="真实姓名"  align="center" prop="realName" min-width="100">
                 <template slot-scope="scope">
                     <el-tag v-if="scope.row.id === '1'" :type="scope.row.realName">{{scope.row.realName}}</el-tag>
                     <span v-else>{{scope.row.realName}}</span>
@@ -73,13 +73,13 @@
                     <span>{{scope.row.updater}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" sortable prop="updateTime" label="修改时间" width="180">
+            <el-table-column align="center" sortable prop="updateTime" label="修改时间" min-width="180">
                 <template slot-scope="scope">
                     <i class="el-icon-time"></i>
                     <span>{{scope.row.updateTime}}</span>
                 </template>
             </el-table-column>
-            <el-table-column align="center" fixed="right" label="操作" min-width="200px" class-name="small-padding">
+            <el-table-column align="center" fixed="right" label="操作" min-width="350" class-name="small-padding">
                 <template slot-scope="scope">
                     <el-button type="primary" v-if="scope.row.status === 0 && scope.row.id != 1" size="mini" @click="enable(scope.row)">启用</el-button>
                     <el-button type="primary" v-if="scope.row.status === 1 && scope.row.id != 1" size="mini" @click="disable(scope.row)">禁用</el-button>
