@@ -3,6 +3,7 @@ package com.xingling.service.impl;
 import com.xingling.model.domain.Role;
 import com.xingling.model.domain.SecurityUser;
 import com.xingling.model.domain.User;
+import com.xingling.service.AuthorityService;
 import com.xingling.service.UserRoleService;
 import com.xingling.service.UserService;
 import org.springframework.security.core.GrantedAuthority;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>Title:	  SecurityUserDetailsService <br/> </p>
@@ -30,14 +33,20 @@ public class SecurityUserDetailsService implements UserDetailsService{
     @Resource
     private UserRoleService userRoleService;
 
+    @Resource
+    private AuthorityService authorityService;
+
     @Override
     public SecurityUser loadUserByUsername(String userName) throws UsernameNotFoundException {
         User user = userService.selectUserByUserName(userName);
         if (user == null) {
             throw new UsernameNotFoundException(userName);
         }
-        Collection<GrantedAuthority> grantedAuthorities = userRoleService.loadUserAuthorities(user.getId());
+
         Collection<Role> roles = userRoleService.getBindRoleListByUserId(user.getId());
+
+        List<String> roleIds = roles.stream().map(Role::getId).collect(Collectors.toList());
+        Collection<GrantedAuthority> grantedAuthorities = authorityService.loadUserAuthorities(roleIds);
         return new SecurityUser(user, grantedAuthorities,roles);
     }
 }

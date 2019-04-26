@@ -140,7 +140,7 @@
         data() {
             const validateAuthorityCode = (rule, value, callback) => {
                 let _this = this;
-                const authorityCodeRegex = /^[A-Za-z0-9:]{3,16}$/;
+                const authorityCodeRegex = /^[A-Za-z0-9:]{3,60}$/;
                 if (!authorityCodeRegex.test(value)) {
                     callback(new Error('权限编码格式不合法'))
                 } else {
@@ -316,7 +316,7 @@
                             data: _this.ruleForm
                         }).then((res) => {
                             if(res.data.code === 200){
-                                _this.dialogFormVisible = true;
+                                _this.dialogFormVisible = false;
                                 _this.resetAuthorityData();
                                 _this.fetchData();
                                 _this.$message({

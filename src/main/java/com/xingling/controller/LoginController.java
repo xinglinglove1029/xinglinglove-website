@@ -55,7 +55,7 @@ public class LoginController {
             session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext()); // 这个非常重要，否则验证后将无法登陆
         }catch (Exception e){
             e.printStackTrace();
-            return WrapMapper.wrap(Wrapper.ERROR_CODE, Wrapper.ERROR_MESSAGE);
+            return WrapMapper.wrap(Wrapper.ERROR_CODE, e.getMessage());
         }
         return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE);
     }

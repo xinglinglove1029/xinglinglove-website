@@ -108,18 +108,24 @@
                 }
             },
             handleLogin() {
-                this.$refs.loginForm.validate(valid => {
+                let _this = this;
+                _this.$refs.loginForm.validate(valid => {
                     if (valid) {
-                        this.loading = true;
-                        this.$http({
+                        _this.loading = true;
+                        _this.$http({
                             method: 'POST',
                             url: '/userLogin',
-                            data: this.loginForm
-                        }).then(function (response) {
-                            console.log(response);
-                            window.location.href="/index"
+                            data: _this.loginForm
+                        }).then(function (res) {
+                            _this.loading = false;
+                            if(res.data.code === 200){
+                                window.location.href="/index";
+                            }else{
+                                _this.$message.error(res.data.message);
+                            }
                         }).catch(function (response) {
                             console.log(response);
+                            window.location.href="/userLogin";
                         });
                     } else {
                         console.log('error submit!!');

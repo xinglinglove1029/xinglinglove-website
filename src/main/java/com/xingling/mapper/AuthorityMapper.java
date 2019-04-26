@@ -3,6 +3,7 @@ package com.xingling.mapper;
 import com.xingling.base.MyMapper;
 import com.xingling.model.domain.Authority;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -35,4 +36,15 @@ public interface AuthorityMapper extends MyMapper<Authority> {
      * @since 2018 /4/27 10:21
      */
     List<Authority> queryListPage(Authority authority);
+
+    /**
+     * <p>Title:      getBindPermissionByRoleIds. </p>
+     * <p>Description 根据角色Id查询权限信息</p>
+     *
+     * @param        roleIds List<String>
+     * @return      List<Authority>
+     * @Author        <a href="yangwensheng@meicai.cn"/>杨文生</a>
+     * @since     2019/4/25 19:20
+     */
+    List<Authority> getBindPermissionByRoleIds(@Param("roleIds") List<String> roleIds);
 }

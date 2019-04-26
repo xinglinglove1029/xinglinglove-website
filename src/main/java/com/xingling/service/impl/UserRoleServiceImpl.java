@@ -46,7 +46,7 @@ public class UserRoleServiceImpl extends BaseServiceImpl<UserRole> implements Us
         List<Authority> ownAuthList = authorityService.getOwnAuthority(userId);
         List<GrantedAuthority> authList = Lists.newArrayList();
         for (Authority authority : ownAuthList) {
-            GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(authority.getAuthorityCode());
+            GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(authority.getUrl());
             authList.add(grantedAuthority);
         }
         return authList;

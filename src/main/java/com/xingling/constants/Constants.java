@@ -58,4 +58,10 @@ public class Constants {
      * 根节点父编码
      */
     public static final  String ROOT_PARENTID = "-1";
+
+
+    /**
+     * 超级管理员的用户编号
+     */
+    public static final String SUPER_MANAGER = "1";
 }

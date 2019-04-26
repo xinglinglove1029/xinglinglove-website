@@ -4,7 +4,9 @@ import com.xingling.base.BaseService;
 import com.xingling.model.domain.Authority;
 import com.xingling.model.dto.AuthUserDto;
 import com.xingling.model.vo.AuthorityTreeVo;
+import org.springframework.security.core.GrantedAuthority;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -104,9 +106,31 @@ public interface AuthorityService extends BaseService<Authority> {
      * <p>Title:      getAllAuthorityInfoList. </p>
      * <p>Description 查询权限树</p>
      *
-     * @return
+     * @return List<AuthorityTreeVo>
      * @Author        <a href="yangwensheng@meicai.cn"/>杨文生</a>
      * @since     2019/4/9 14:30
      */
     List<AuthorityTreeVo> getAllAuthorityInfoList();
+    
+    /**
+     * <p>Title:      getBindPermissionByRoleIds. </p>
+     * <p>Description 根据角色Id查询权限信息</p>
+     *
+     * @param        roleIds List<String>
+     * @return      List<Authority>  
+     * @Author        <a href="yangwensheng@meicai.cn"/>杨文生</a>
+     * @since     2019/4/25 19:20
+     */
+    List<Authority> getBindPermissionByRoleIds(List<String> roleIds);
+
+    /**
+     * <p>Title:      getBindPermissionByRoleIds. </p>
+     * <p>Description 根据角色Id查询权限信息</p>
+     *
+     * @param        roleIds List<String>
+     * @return      List<Authority>
+     * @Author        <a href="yangwensheng@meicai.cn"/>杨文生</a>
+     * @since     2019/4/25 19:20
+     */
+    Collection<GrantedAuthority> loadUserAuthorities(List<String> roleIds);
 }

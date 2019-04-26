@@ -12,13 +12,15 @@ import com.xingling.model.dto.AuthUserDto;
 import com.xingling.model.vo.AuthorityTreeVo;
 import com.xingling.service.AuthorityService;
 import com.xingling.util.TreeUtil;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * <p>Title:	  AuthorityServiceImpl <br/> </p>
@@ -131,15 +133,16 @@ public class AuthorityServiceImpl extends BaseServiceImpl<Authority> implements 
     public List<AuthorityTreeVo> getAllAuthorityInfoList() {
         // 查询所有菜单信息
         List<Menu> menuList = menuMapper.selectAllMenu();
-        menuList = menuList.stream().filter(f -> !Constants.ROOT_PARENTID.equals(f.getPid())).collect(Collectors.toList());
+//        menuList = menuList.stream().filter(f -> !Constants.ROOT_PARENTID.equals(f.getPid())).collect(Collectors.toList());
 
         // 查询所有权限信息
         List<Authority> authorityList = authorityMapper.selectAll();
 
         // 合并菜单和权限数据
         List<AuthorityTreeVo> authorityTreeVos = this.buildResourceData(menuList, authorityList);
-        return TreeUtil.bulid(authorityTreeVos, Constants.MENU_ROOT);
+        return TreeUtil.bulid(authorityTreeVos, Constants.ROOT_PARENTID);
     }
+
 
     private List<AuthorityTreeVo> buildResourceData(List<Menu> menuList, List<Authority> authorityList) {
         List<AuthorityTreeVo> authorityTreeVos = Lists.newArrayList();
@@ -163,5 +166,22 @@ public class AuthorityServiceImpl extends BaseServiceImpl<Authority> implements 
             }
         }
         return authorityTreeVos;
+    }
+
+    @Override
+    public List<Authority> getBindPermissionByRoleIds(List<String> roleIds) {
+        return authorityMapper.getBindPermissionByRoleIds(roleIds);
+    }
+
+
+    @Override
+    public Collection<GrantedAuthority> loadUserAuthorities(List<String> roleIds) {
+        List<Authority> ownAuthList = authorityMapper.getBindPermissionByRoleIds(roleIds);
+        List<GrantedAuthority> authList = Lists.newArrayList();
+        for (Authority authority : ownAuthList) {
+            GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(authority.getUrl());
+            authList.add(grantedAuthority);
+        }
+        return authList;
     }
 }

@@ -7,6 +7,8 @@ import com.xingling.config.security.Authentication.CustomerLogoutSuccessHandler;
 import com.xingling.config.security.authorize.AuthorizeConfigManager;
 import com.xingling.config.security.authorize.CustomerAccessDecisionManager;
 import com.xingling.config.security.authorize.CustomerMetadataSource;
+import com.xingling.config.security.filter.CustomerLoginFilter;
+import com.xingling.config.security.interceptor.CustomerSecurityInterceptor;
 import com.xingling.service.impl.SecurityUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +21,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.annotation.Resource;
@@ -66,7 +69,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic()
                 .authenticationEntryPoint(customerLoginAuthEntryPoint)
                 .and()
-//                .addFilterAt(getCustomerSecurityInterceptor(), FilterSecurityInterceptor.class)
+                .addFilterAt(getCustomerLoginFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAt(getCustomerSecurityInterceptor(), FilterSecurityInterceptor.class)
                 .logout().logoutSuccessHandler(customerLogoutSuccessHandler)
                 .and()
                 .formLogin()
@@ -136,8 +140,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      * @return
      */
     @Bean
-    public UsernamePasswordAuthenticationFilter getUsernamePasswordAuthenticationFilter() {
-        UsernamePasswordAuthenticationFilter filter = new UsernamePasswordAuthenticationFilter();
+    public CustomerLoginFilter getCustomerLoginFilter() {
+        CustomerLoginFilter filter = new CustomerLoginFilter();
         try {
             filter.setAuthenticationManager(this.authenticationManagerBean());
         } catch (Exception e) {
@@ -154,17 +158,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      * 过滤器
      * @return
      */
-//    @Bean
-//    public CustomerSecurityInterceptor getCustomerSecurityInterceptor() {
-//        CustomerSecurityInterceptor interceptor = new CustomerSecurityInterceptor();
-//        interceptor.setAccessDecisionManager(customerAccessDecisionManager);
-//        interceptor.setSecurityMetadataSource(customerMetadataSource);
-//        try {
-//            interceptor.setAuthenticationManager(this.authenticationManagerBean());
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return interceptor;
-//    }
+    @Bean
+    public CustomerSecurityInterceptor getCustomerSecurityInterceptor() {
+        CustomerSecurityInterceptor interceptor = new CustomerSecurityInterceptor();
+        interceptor.setAccessDecisionManager(customerAccessDecisionManager);
+        interceptor.setSecurityMetadataSource(customerMetadataSource);
+        try {
+            interceptor.setAuthenticationManager(this.authenticationManagerBean());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return interceptor;
+    }
 
 }

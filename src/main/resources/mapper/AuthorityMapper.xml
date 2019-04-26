@@ -45,6 +45,7 @@
         FROM
         xl_authority aa
         inner JOIN xl_menu bb on aa.menu_id = bb.id
+        where aa.del = 0
         <if test="authorityName != null and authorityName != ''">
             AND aa.authority_name LIKE concat('%',#{authorityName},'%')
         </if>
@@ -56,6 +57,16 @@
         </if>
         <if test="menuId != null and menuId != ''">
             AND aa.menu_id = #{menuId}
+        </if>
+    </select>
+    <select id="getBindPermissionByRoleIds" resultMap="BaseResultMap">
+        select DISTINCT bb.* from xl_role_authority aa JOIN xl_authority bb on aa.authority_id = bb.id
+        where 1=1
+        <if test="roleIds != null and roleIds.size() > 0 ">
+            AND aa.role_id IN
+            <foreach collection="roleIds" item="item" index="index" open="(" separator="," close=")">
+                #{item}
+            </foreach>
         </if>
     </select>
 </mapper>
