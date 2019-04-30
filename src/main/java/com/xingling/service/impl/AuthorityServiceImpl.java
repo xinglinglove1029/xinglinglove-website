@@ -62,12 +62,10 @@ public class AuthorityServiceImpl extends BaseServiceImpl<Authority> implements 
         if (Objects.isNull(auth)) {
             throw new BusinessException("权限信息不存在");
         }
-        queryAuthority.setCreator(authUserDto.getRealName());
-        queryAuthority.setCreatorId(authUserDto.getUserId());
-        queryAuthority.setUpdater(authUserDto.getRealName());
-        queryAuthority.setUpdaterId(authUserDto.getUserId());
-        queryAuthority.setUpdateTime(new Date());
-        return authorityMapper.updateByPrimaryKeySelective(queryAuthority);
+        authority.setUpdater(authUserDto.getRealName());
+        authority.setUpdaterId(authUserDto.getUserId());
+        authority.setUpdateTime(new Date());
+        return authorityMapper.updateByPrimaryKeySelective(authority);
     }
 
     @Override

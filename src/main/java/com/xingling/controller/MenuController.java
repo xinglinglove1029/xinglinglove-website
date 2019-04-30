@@ -118,7 +118,7 @@ public class MenuController extends BaseController {
     }
 
     /**
-     * <p>Title:      modifyUser. </p>
+     * <p>Title:      modifyMenu. </p>
      * <p>Description 修改菜单信息</p>
      *
      * @param menu the menu

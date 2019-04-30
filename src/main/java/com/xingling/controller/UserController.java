@@ -244,7 +244,7 @@ public class UserController extends BaseController {
     }
 
     /**
-     * <p>Title:      getRoleList. </p>
+     * <p>Title:      getBindRoleListByUserId. </p>
      * <p>Description 查詢当前用户所绑定的角色信息</p>
      *
      * @param userId String
@@ -253,7 +253,7 @@ public class UserController extends BaseController {
      * @since     2019/4/11 14:35
      */
     @PostMapping(value = "/getBindRoleListByUserId")
-    @ApiOperation(httpMethod = "POST", value = "查询角色信息")
+    @ApiOperation(httpMethod = "POST", value = "查詢当前用户所绑定的角色信息")
     public Wrapper<List<String>> getBindRoleListByUserId(@RequestBody String userId) {
         List<Role> bindRoleList = userRoleService.getBindRoleListByUserId(userId);
         List<String> roleIds = bindRoleList.stream().map(Role::getId).collect(Collectors.toList());

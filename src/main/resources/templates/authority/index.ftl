@@ -11,6 +11,16 @@
     <div class="app-container calendar-list-container">
         <div class="filter-container">
             <el-form :inline="true" :model="listQuery" ref="listQuery">
+                <el-form-item label="" prop="menuId">
+                    <el-select @keyup.enter.native="searchFilter" v-model="listQuery.menuId" filterable clearable  placeholder="请选择菜单">
+                        <el-option
+                                v-for="item in menuList"
+                                :key="item.id"
+                                :label="item.menuName"
+                                :value="item.id">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
                 <el-form-item label=""  prop="authorityName">
                     <el-input @keyup.enter.native="searchFilter"  style="width: 200px;" class="filter-item" placeholder="权限名" v-model="listQuery.authorityName">
                     </el-input>
@@ -182,7 +192,8 @@
                     pageSize: 20,
                     authorityName: '',
                     authorityCode: '',
-                    status: ''
+                    status: '',
+                    menuId: ''
                 },
                 menuList: [],
                 statusArray: [
@@ -214,7 +225,7 @@
                 rules: {
                     authorityName: [
                         { required: true, message: '权限名称不能为空', trigger: 'blur' },
-                        { min: 2, max: 20, message: '权限名称长度为2到20个字符', trigger: 'blur' },
+                        { min: 2, max: 40, message: '权限名称长度为2到40个字符', trigger: 'blur' },
                         { validator: validateAuthorityName, trigger: 'blur' }
                     ],
                     authorityCode: [
@@ -223,7 +234,7 @@
                     ],
                     url: [
                         { required: true, message: 'URL不能为空', trigger: 'blur' },
-                        { min: 2, max: 30, message: '权限名称长度为2到30个字符', trigger: 'blur' }
+                        { min: 2, max: 60, message: '权限名称长度为2到60个字符', trigger: 'blur' }
                     ],
                     menuId: [
                         { required: true, message: '菜单不能为空', trigger: 'blur' }
