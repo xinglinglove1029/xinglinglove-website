@@ -371,7 +371,7 @@
                             data: _this.role
                         }).then((res) => {
                             if(res.data.code === 200){
-                                _this.dialogFormVisible = true;
+                                _this.dialogFormVisible = false;
                                 _this.resetRoleData();
                                 _this.fetchData();
                                 _this.$message({
@@ -402,7 +402,8 @@
                 let _this = this;
                 _this.role = {
                     roleName: '',
-                    roleCode: ''
+                    roleCode: '',
+                    status: '1'
                 }
             },
             edit(row) {
