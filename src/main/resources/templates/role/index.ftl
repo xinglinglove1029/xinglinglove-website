@@ -152,6 +152,12 @@
             <div class="tree-container" >
                 <el-row :gutter="24">
                     <el-col :span="6" :xs="24" :sm="24" :md="6" :lg="6" style="margin-bottom: 20px;">
+                        <el-button type="primary" @click="checkedAll" size="mini">全选</el-button>
+                        <el-button type="primary" @click="noCheckedAll" size="mini">全不选</el-button>
+                    </el-col>
+                </el-row>
+                <el-row :gutter="24">
+                    <el-col :span="6" :xs="24" :sm="24" :md="6" :lg="6" style="margin-bottom: 20px;">
                         <el-input placeholder="输入关键字进行过滤" v-model="filterText" style="width:300px"> </el-input>
                         <el-tree
                                 class="filter-tree"
@@ -261,6 +267,7 @@
                 ],
                 selectedRoleId: '',
                 checkedKeys: [],
+                checkedAllKeys: [],
                 dialogFormVisible: false,
                 bindUserDialogVisible: false,
                 bindAuthorityDialogVisible: false,
@@ -572,9 +579,26 @@
                     console.log(err);
                 });
             },
+            getAllResourceIdList(){
+                let _this = this;
+                _this.$http({
+                    method: 'POST',
+                    url: '/role/getAllResourceIdList'
+                }).then((res) => {
+                    if(res.data.code === 200){
+                        _this.checkedAllKeys = res.data.result;
+                    }else{
+                        _this.$message({
+                            type: 'warning',
+                            message: res.data.message
+                        })
+                    }
+                }).catch((err) => {
+                    console.log(err);
+                });
+            },
             bindAuthority(row){
                 let _this = this;
-                console.log(row);
                 _this.selectedRoleId = row.id;
                 _this.bindAuthorityDialogVisible = true;
                 _this.listLoading = true;
@@ -601,7 +625,6 @@
                 }).then((res) => {
                     if(res.data.code === 200){
                         _this.checkedKeys = res.data.result;
-                        _this.listLoading = false;
                     }else{
                         _this.$message({
                             type: 'warning',
@@ -611,6 +634,7 @@
                 }).catch((err) => {
                     console.log(err);
                 });
+                _this.getAllResourceIdList();
             },
             saveAuthorityInfo(){
                 let _this = this;
@@ -651,6 +675,16 @@
             },
             handleChange(value, direction, movedKeys) {
                 console.log(value, direction, movedKeys);
+            },
+            checkedAll(){
+                debugger;
+                let _this = this;
+                _this.checkedKeys = _this.checkedAllKeys;
+            },
+            noCheckedAll(){
+                let _this = this;
+                _this.$refs.authorityTree.setCheckedKeys([]);
+                _this.checkedKeys = [];
             }
         }
     });

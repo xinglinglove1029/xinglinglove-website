@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * <p>Title:	  AuthorityServiceImpl <br/> </p>
@@ -181,5 +182,20 @@ public class AuthorityServiceImpl extends BaseServiceImpl<Authority> implements 
             authList.add(grantedAuthority);
         }
         return authList;
+    }
+
+    @Override
+    public List<String> getAllResourceIdList() {
+        List<String> idList = Lists.newArrayList();
+        // 查询所有菜单信息
+        List<Menu> menuList = menuMapper.selectAllMenu();
+        List<String> menuIds = menuList.stream().map(Menu::getId).collect(Collectors.toList());
+
+        // 查询所有权限信息
+        List<Authority> authorityList = authorityMapper.selectAll();
+        List<String> authorityIds = authorityList.stream().map(Authority::getId).collect(Collectors.toList());
+        idList.addAll(menuIds);
+        idList.addAll(authorityIds);
+        return idList;
     }
 }

@@ -116,7 +116,7 @@ public class AuthorityController extends BaseController {
     }
 
     /**
-     * <p>Title:      modifyUser. </p>
+     * <p>Title:      modifyAuthority. </p>
      * <p>Description 修改权限信息</p>
      *
      * @param authority the authority

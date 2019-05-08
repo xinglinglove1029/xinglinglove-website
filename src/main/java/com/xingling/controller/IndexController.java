@@ -49,6 +49,13 @@ public class IndexController {
         return modelAndView;
     }
 
+    @GetMapping(value = "/error")
+    public ModelAndView error() {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("error/error_403");
+        return modelAndView;
+    }
+
     @PostMapping(value = "/getMenuTreeByUserId")
     @ApiOperation(httpMethod = "POST", value = "查询当前登录人拥有的菜单树")
     public Wrapper<List<MenuTreeVo>> getMenuTreeByUserId() {

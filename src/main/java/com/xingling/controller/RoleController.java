@@ -209,6 +209,21 @@ public class RoleController extends BaseController {
     }
 
     /**
+     * <p>Title:     getAllResourceIdList . </p>
+     * <p>Description 查询所有的资源id集合</p>
+     *
+     * @return       List<String>
+     * @Author        <a href="yangwensheng@meicai.cn"/>杨文生</a>
+     * @since     2019/5/8 15:29
+     */
+    @PostMapping(value = "/getAllResourceIdList")
+    @ApiOperation(httpMethod = "POST", value = "查询所有的资源id集合")
+    public Wrapper<List<String>> getAllResourceIdList() {
+        List<String> resourceIdList = authorityService.getAllResourceIdList();
+        return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, resourceIdList);
+    }
+
+    /**
      * <p>Title:      roleBindResource. </p>
      * <p>Description 角色绑定资源</p>
      *

@@ -792,6 +792,7 @@
                 _this.ruleForm2.url = data.url;
                 _this.ruleForm2.number = data.number;
                 _this.ruleForm2.status = data.status;
+                _this.ruleForm2.icon = data.icon;
                 // 删除
                 _this.deleteMenuId = data.id;
                 // 节点禁用标识

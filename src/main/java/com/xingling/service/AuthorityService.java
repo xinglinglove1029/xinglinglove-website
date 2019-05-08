@@ -133,4 +133,14 @@ public interface AuthorityService extends BaseService<Authority> {
      * @since     2019/4/25 19:20
      */
     Collection<GrantedAuthority> loadUserAuthorities(List<String> roleIds);
+
+    /**
+     * <p>Title:     getAllResourceIdList . </p>
+     * <p>Description 查询所有的资源id集合</p>
+     *
+     * @return       List<String>
+     * @Author        <a href="yangwensheng@meicai.cn"/>杨文生</a>
+     * @since     2019/5/8 15:29
+     */
+    List<String> getAllResourceIdList();
 }
