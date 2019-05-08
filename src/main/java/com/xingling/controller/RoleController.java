@@ -165,7 +165,7 @@ public class RoleController extends BaseController {
      * @Author <a href="190332447@qq.com"/>杨文生</a>
      * @since 2018 /2/24 17:08
      */
-    @PostMapping(value = "/checkRoleCode")
+    @PostMapping(value = "/checkRoleName")
     @ApiOperation(httpMethod = "POST", value = "校验角色名唯一性")
     public Wrapper<Boolean> checkRoleName(@ApiParam(name = "checkRoleNameDto", value = "用户名dto") @RequestBody CheckRoleNameDto checkRoleNameDto) {
         boolean flag = false;
