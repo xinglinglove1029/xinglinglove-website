@@ -230,7 +230,7 @@
                 _this.ruleForm1.pid = data.id;
                 _this.addParentName = data.deptName;
                 // 修改
-                _this.ruleForm2.pid = data.parentId;;
+                _this.ruleForm2.pid = data.parentId;
                 _this.ruleForm2.deptCode = data.deptCode;
                 _this.ruleForm2.deptName = data.deptName;
                 _this.ruleForm2.status = data.status;

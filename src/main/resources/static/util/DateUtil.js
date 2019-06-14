@@ -9,7 +9,7 @@ let DateUtils = {
             }
             d = Math.floor((dateobj.valueOf() - firstDay.valueOf()) / 86400000);
             let weekNum = Math.floor(d / 7) + 2;
-            let strDate = dateobj.getFullYear() + "第" + weekNum +"周"
+            let strDate = dateobj.getFullYear() + "第" + weekNum +"周";
             return strDate;
         },
         getFirstWeekBegDay: function(year) {

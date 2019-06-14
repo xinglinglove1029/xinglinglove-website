@@ -2,6 +2,7 @@ package com.xingling.controller;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.xingling.annotation.AccessLimit;
 import com.xingling.base.BaseController;
 import com.xingling.common.WrapMapper;
 import com.xingling.common.Wrapper;
@@ -90,6 +91,7 @@ public class UserController extends BaseController {
      * @CreateDate 2017 /8/17 19:04
      */
     @PostMapping(value = "/listPage")
+    @AccessLimit(maxCount = 2,seconds = 1)
     @ApiOperation(httpMethod = "POST", value = "分页查询用户列表")
     public Wrapper<PageInfo<User>> listPage(@ApiParam(name = "user", value = "用户信息") @RequestBody User user) {
         PageHelper.startPage(user.getPageNum(), user.getPageSize());

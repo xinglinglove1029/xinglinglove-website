@@ -1,67 +1,83 @@
 package com.xingling.aspect;
 
 import com.xingling.annotation.AccessLimit;
+import com.xingling.constants.Constants;
+import com.xingling.exception.BusinessException;
+import com.xingling.util.IpUtil;
+import com.xingling.util.JedisUtil;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
 
 /**
- * <p>Title:	  xinglinglove-website <br/> </p>
- * <p>Description TODO <br/> </p>
- * <p>Company:    http://www.hnxianyi.com  <br/> </p>
+ * <p>Title:      AccessLimitInterceptor. </p>
+ * <p>Description 接口限流拦截器 </p>
+ * <p>Copyright: Copyright (c) 2016</p>
+ * <p>Company:    北京云杉世界信息技术有限公司 </p>
  *
- * @Author <a href="190332447@qq.com"/>杨文生</a>  <br/>
- * @Date 2019/4/19 12:04
+ * @author         <a href="yangwensheng@meicai.cn"/>杨文生</a>
+ * @since      2019/6/13 14:20
  */
 @Component
 public class AccessLimitInterceptor extends HandlerInterceptorAdapter {
 
+    @Resource
+    private JedisUtil jedisUtil;
+
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        if (!(handler instanceof HandlerMethod)) {
+            return true;
+        }
 
-        //判断请求是否属于方法的请求
-        if(handler instanceof HandlerMethod){
+        HandlerMethod handlerMethod = (HandlerMethod) handler;
+        Method method = handlerMethod.getMethod();
 
-            HandlerMethod hm = (HandlerMethod) handler;
-
-            //获取方法中的注解,看是否有该注解
-            AccessLimit accessLimit = hm.getMethodAnnotation(AccessLimit.class);
-            if(accessLimit == null){
-                return true;
-            }
-            int seconds = accessLimit.seconds();
-            int maxCount = accessLimit.maxCount();
-            String key = request.getRequestURI();
-
-
-            //从redis中获取用户访问的次数
-//            Integer count = Integer.parseInt(RedisUtil.get(key).toString());
-//            if(count == null){
-//                //第一次访问
-//                RedisUtil.set(key,key,1);
-//            }else if(count < maxCount){
-//                //加1
-//                RedisUtil.incr(key,1L);
-//            }else{
-//                //超出访问次数
-////                render(response,CodeMsg.ACCESS_LIMIT_REACHED); //这里的CodeMsg是一个返回参数
-//
-//            }
-            return false;
+        AccessLimit annotation = method.getAnnotation(AccessLimit.class);
+        if (annotation != null) {
+            check(annotation, request);
         }
 
         return true;
-
     }
-//    private void render(HttpServletResponse response, CodeMsg cm)throws Exception {
-//        response.setContentType("application/json;charset=UTF-8");
-//        OutputStream out = response.getOutputStream();
-//        String str  = JSON.toJSONString(Result.error(cm));
-//        out.write(str.getBytes("UTF-8"));
-//        out.flush();
-//        out.close();
-//    }
+
+    private void check(AccessLimit annotation, HttpServletRequest request) {
+        int maxCount = annotation.maxCount();
+        int seconds = annotation.seconds();
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(Constants.Redis.ACCESS_LIMIT_PREFIX).append(IpUtil.getIpAddress(request)).append(request.getRequestURI());
+        String key = sb.toString();
+
+        Boolean exists = jedisUtil.exists(key);
+        if (!exists) {
+            jedisUtil.set(key, String.valueOf(1), seconds);
+        } else {
+            int count = Integer.valueOf(jedisUtil.get(key));
+            if (count < maxCount) {
+                Long ttl = jedisUtil.ttl(key);
+                if (ttl <= 0) {
+                    jedisUtil.set(key, String.valueOf(1), seconds);
+                } else {
+                    jedisUtil.set(key, String.valueOf(++count), ttl.intValue());
+                }
+            } else {
+                throw new BusinessException("请求太频繁, 请稍后再试");
+            }
+        }
+    }
+
+    @Override
+    public void postHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, ModelAndView modelAndView) throws Exception {
+    }
+
+    @Override
+    public void afterCompletion(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e) throws Exception {
+    }
 }

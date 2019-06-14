@@ -6,12 +6,13 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * <p>Title:	  xinglinglove-website <br/> </p>
- * <p>Description TODO <br/> </p>
- * <p>Company:    http://www.hnxianyi.com  <br/> </p>
+ * <p>Title:      AccessLimit. </p>
+ * <p>Description 在需要保证 接口防刷限流 的Controller的方法上使用此注解 </p>
+ * <p>Copyright: Copyright (c) 2016</p>
+ * <p>Company:    北京云杉世界信息技术有限公司 </p>
  *
- * @Author <a href="190332447@qq.com"/>杨文生</a>  <br/>
- * @Date 2019/4/19 12:03
+ * @author         <a href="yangwensheng@meicai.cn"/>杨文生</a>
+ * @since      2019/6/13 11:29
  */
 @Retention(RUNTIME)
 @Target(METHOD)

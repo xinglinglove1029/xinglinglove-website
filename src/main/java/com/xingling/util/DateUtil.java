@@ -1344,7 +1344,6 @@ public class DateUtil {
     public static Date notAfterYesterday(Date myDate) {
         Date today = new Date();
         Date yesterday = DateUtils.addDays(today, -1);
-        ;
         // 3. 结束时间不能大于昨天.
         if (myDate.after(yesterday)) {
             log.warn("myDate.after(yesterday), set myDate = yesterday:" + yesterday);
@@ -1620,7 +1619,7 @@ public class DateUtil {
         }
         cal.setTime(new SimpleDateFormat("yyyy-MM-dd").parse(nowDate));
         cal.add(Calendar.DAY_OF_YEAR, Long.valueOf(y).intValue());
-        return sdf.format(cal.getTime()).toString();
+        return sdf.format(cal.getTime());
     }
 
     /**
@@ -1890,7 +1889,7 @@ public class DateUtil {
      * @throws ParseException the parse exception
      */
     public static String dateParse(String date) throws ParseException {
-        String strDate[] = date.split("-");
+        String[] strDate = date.split("-");
         String str = strDate[0] + "年" + strDate[1] + "月" + strDate[2] + "日";
         return str;
     }
@@ -2096,7 +2095,7 @@ public class DateUtil {
     public static String getPreOneMonth(String patter) {
         Calendar theCa = Calendar.getInstance();
         theCa.setTime(new Date());
-        theCa.add(theCa.DATE, -30);
+        theCa.add(Calendar.DATE, -30);
         Date date = theCa.getTime();
         return date2Str(date, patter);
     }

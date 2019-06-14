@@ -1,6 +1,7 @@
 package com.xingling.config;
 
 import com.xingling.aspect.AccessLimitInterceptor;
+import com.xingling.aspect.ApiIdempotentInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
@@ -27,10 +28,13 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
     @Resource
     private AccessLimitInterceptor accessLimitInterceptor;
 
+    @Resource
+    private ApiIdempotentInterceptor apiIdempotentInterceptor;
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         logger.info("add interceptors");
-//        registry.addInterceptor(new LoginRequiredInterceptor()).excludePathPatterns(Arrays.asList("/views/**", "/res/**"));
+        registry.addInterceptor(apiIdempotentInterceptor);
         registry.addInterceptor(accessLimitInterceptor);
     }
 

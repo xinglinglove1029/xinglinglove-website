@@ -206,7 +206,7 @@
                 }
             };
             const validateEmail = (rule, value, callback) => {
-                const emailReg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/
+                const emailReg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/;
                 if (!emailReg.test(value)) {
                     callback(new Error('邮箱格式不正确'));
                 } else {
@@ -296,7 +296,7 @@
                         value = '男';
                         break;
                     case '2':
-                        value = '女';getDepartmentList
+                        value = '女';getDepartmentList;
                         break;
                 }
                 return value

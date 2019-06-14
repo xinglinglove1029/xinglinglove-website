@@ -38,18 +38,29 @@ spring:
     expose-request-attributes: true
     request-context-attribute: true
     content-type: text/html
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: 123456
+    database: 0
+    timeout:  0
+    jedis:
+      pool:
+        max-idle: 8
+        max-wait: -1
+        min-idle: 0
 #多数据愿读写分离配置
 datasource:
   master:
     username: root
     password: Xk98Ypz9^QoarrO
     driver-class-name: com.mysql.jdbc.Driver
-    jdbc-url: jdbc:mysql://xinglinglove.cn:3306/xingling_umc?useUnicode=true&characterEncoding=UTF-8
+    jdbc-url: jdbc:mysql://140.143.0.126:6688/xingling_umc?useUnicode=true&characterEncoding=UTF-8
   slaver:
     username: root
     password: Xk98Ypz9^QoarrO
     driver-class-name: com.mysql.jdbc.Driver
-    jdbc-url: jdbc:mysql://xinglinglove.cn:3306/xingling_umc?useUnicode=true&characterEncoding=UTF-8
+    jdbc-url: jdbc:mysql://140.143.0.126:6688/xingling_umc?useUnicode=true&characterEncoding=UTF-8
   read: get,select,count,list,query,check
   write: enable,disable,modify,bind,add,create,update,delete,remove,insert,batchInsert,batchSave,batchUpdate,batchDelete
 #mybatis
