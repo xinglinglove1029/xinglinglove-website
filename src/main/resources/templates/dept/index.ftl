@@ -24,7 +24,7 @@
         <div class="tree-container">
             <el-row :gutter="24">
                 <el-col :span="6" :xs="24" :sm="24" :md="6" :lg="6" style="margin-bottom: 20px;">
-                    <el-input placeholder="输入关键字进行过滤"v-model="filterText"></el-input>
+                    <el-input placeholder="输入关键字进行过滤" v-model="filterText"></el-input>
                     <el-tree
                             class="filter-tree"
                             :data="treeData"

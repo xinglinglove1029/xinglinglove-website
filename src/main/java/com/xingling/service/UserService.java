@@ -117,5 +117,5 @@ public interface UserService extends BaseService<User> {
 	 * @Author <a href="yangwensheng@meicai.cn"/>杨文生</a>
 	 * @since 2018 /4/28 15:01
 	 */
-	List<User> selectAllExcludeSupper();
+	List<User> selectAllExcludeSupper(Byte excludeSupper);
 }

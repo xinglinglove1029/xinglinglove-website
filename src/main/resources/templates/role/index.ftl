@@ -130,20 +130,13 @@
                         filterable
                         :filter-method="filterMethod"
                         filter-placeholder="请输入城市拼音"
-                        :render-content="renderFunc"
                         v-model="alreadyBindUser"
-                        :props="{
-                            key: 'id',
-                            label: 'realName'
-                            }"
-                            @change="handleChange"
-                            :titles="['未绑定用户', '已绑定用户']"
-                            :button-texts="['到左边', '到右边']"
-                            <#--:format="{-->
-                            <#--noChecked: '${total}',-->
-                            <#--hasChecked: '${checked}/${total}'-->
-                            <#--}"-->
-                        :data="notBindUser">
+                        :props="{key: 'id',label: 'realName',disabled: 'disabled'}"
+                        @change="handleChange"
+                        :titles="['未绑定用户', '已绑定用户']"
+                        :button-texts="['到左边', '到右边']"
+                        :data="allUser">
+                    <span slot-scope="{ option }">{{ option.realName }} - {{ option.cellPhone }}</span>
                 </el-transfer>
             </template>
         </el-dialog>
@@ -179,7 +172,7 @@
             </div>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="bindAuthorityDialogVisible = false">取 消</el-button>
-                <el-button type="primary" @click="saveAuthorityInfo">确 定</el-button>
+                <el-button type="primary" :disabled="btnDisabled" @click="saveAuthorityInfo">确 定</el-button>
             </div>
         </el-dialog>
     </div>
@@ -223,22 +216,37 @@
                 }
             };
             const validateRoleCode = (rule, value, callback) => {
+                let _this = this;
                 const roleCodeRegex = /^[A-Za-z0-9]{3,16}$/;
                 if (!roleCodeRegex.test(value)) {
                     callback(new Error('角色编码格式不合法'));
                 } else {
-                    callback()
+                    const param = {};
+                    param.roleCode = value;
+                    if (_this.dialogStatus === 'update') {
+                        param.roleId = _this.role.id
+                    }
+                    _this.$http({
+                        method: 'POST',
+                        url: '/role/checkRoleCode',
+                        data: param
+                    }).then((res) => {
+                        if(res.data.code === 200 && res.data.result === true){
+                            callback(new Error('角色编码已存在'));
+                        }else{
+                            callback();
+                        }
+                    }).catch((err) => {
+                        console.log(err);
+                        callback(new Error('服务异常,请稍后重试'));
+                    });
                 }
             };
             return {
-                notBindUser: [],
-                alreadyBindUser: [],
-                renderFunc(h, option) {
-                    return `<span>{ option.realName } - { option.cellPhone }</span>`;
-                },
                 filterMethod(query, item) {
                     return item.realName.indexOf(query) > -1;
                 },
+                btnDisabled: false,
                 filterText: '',
                 treeData: [],
                 defaultProps: {
@@ -246,6 +254,8 @@
                     label: 'resourceName'
                 },
                 tableData: [],
+                alreadyBindUser: [],
+                allUser: [],
                 checkedNodeList: [],
                 listLoading: true,
                 total: 0,
@@ -567,8 +577,8 @@
                     data: row.id
                 }).then((res) => {
                     if(res.data.code === 200){
-                        _this.notBindUser = res.data.notBindUserList;
-                        _this.alreadyBindUser = res.data.alreadyBindUserIds;
+                        _this.allUser = res.data.result.alllUserList;
+                        _this.alreadyBindUser = res.data.result.alreadyBindUserIds;
                         _this.listLoading = false;
                     }else{
                         _this.$message({
@@ -639,6 +649,7 @@
             },
             saveAuthorityInfo(){
                 let _this = this;
+                _this.btnDisabled = true;
                 let checkedNodes = _this.$refs.authorityTree.getCheckedNodes();
 
                 _this.checkedNodeList = [];
@@ -660,11 +671,13 @@
                     if(res.data.code === 200){
                         _this.bindAuthorityDialogVisible = false;
                         _this.listLoading = false;
+                        _this.btnDisabled = false;
                         _this.$message({
                             type: 'success',
                             message: '绑定成功!'
                         })
                     }else{
+                        _this.btnDisabled = false;
                         _this.$message({
                             type: 'warning',
                             message: res.data.message
@@ -678,7 +691,6 @@
                 console.log(value, direction, movedKeys);
             },
             checkedAll(){
-                debugger;
                 let _this = this;
                 _this.checkedKeys = _this.checkedAllKeys;
             },

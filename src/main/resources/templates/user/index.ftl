@@ -296,7 +296,7 @@
                         value = '男';
                         break;
                     case '2':
-                        value = '女';getDepartmentList;
+                        value = '女';
                         break;
                 }
                 return value

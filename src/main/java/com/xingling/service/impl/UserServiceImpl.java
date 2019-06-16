@@ -207,7 +207,7 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
 	}
 
 	@Override
-	public List<User> selectAllExcludeSupper() {
-		return userMapper.selectAllExcludeSupper();
+	public List<User> selectAllExcludeSupper(Byte excludeSupper) {
+		return userMapper.selectAllExcludeSupper(excludeSupper);
 	}
 }

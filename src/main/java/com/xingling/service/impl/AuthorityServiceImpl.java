@@ -8,13 +8,16 @@ import com.xingling.mapper.AuthorityMapper;
 import com.xingling.mapper.MenuMapper;
 import com.xingling.model.domain.Authority;
 import com.xingling.model.domain.Menu;
+import com.xingling.model.domain.RoleAuthority;
 import com.xingling.model.dto.AuthUserDto;
 import com.xingling.model.vo.AuthorityTreeVo;
 import com.xingling.service.AuthorityService;
+import com.xingling.service.RoleAuthorityService;
 import com.xingling.util.TreeUtil;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Collection;
@@ -40,18 +43,32 @@ public class AuthorityServiceImpl extends BaseServiceImpl<Authority> implements 
     @Resource
     private MenuMapper menuMapper;
 
+    @Resource
+    private RoleAuthorityService roleAuthorityService;
+
     @Override
     public List<Authority> getOwnAuthority(String userId) {
         return authorityMapper.getOwnAuthority(userId);
     }
 
     @Override
+    @Transactional
     public int saveAuthorityInfo(Authority authority, AuthUserDto authUserDto) {
         authority.setCreator(authUserDto.getRealName());
         authority.setCreatorId(authUserDto.getUserId());
         authority.setUpdater(authUserDto.getRealName());
         authority.setUpdaterId(authUserDto.getUserId());
-        return authorityMapper.insertSelective(authority);
+        int result = authorityMapper.insertSelective(authority);
+
+        // 给超级管理员这个角色赋予这个新增的权限字符串
+        Authority query = new Authority();
+        query.setAuthorityCode(authority.getAuthorityCode());
+        Authority queryAuthority = authorityMapper.selectOne(query);
+        RoleAuthority roleAuthority = new RoleAuthority();
+        roleAuthority.setRoleId(Constants.SUPER_MANAGER);
+        roleAuthority.setAuthorityId(queryAuthority.getId());
+        roleAuthorityService.save(roleAuthority);
+        return result;
     }
 
     @Override

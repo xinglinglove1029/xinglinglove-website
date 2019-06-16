@@ -65,6 +65,10 @@
         </if>
     </select>
     <select id="selectAllExcludeSupper" resultType="com.xingling.model.domain.User">
-        SELECT aa.* from xl_user aa WHERE aa.id != '1'
+        SELECT aa.* from xl_user aa WHERE
+        <if test="_param != null and _param == '1'.toString()">
+            aa.id != '1'
+        </if>
     </select>
+
 </mapper>

@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 
 /**
- * <p>Title:      CheckRoleNameDto. </p>
+ * <p>Title:      CheckRoleDto. </p>
  * <p>Description TODO </p>
  * <p>Copyright: Copyright (c) 2016</p>
  * <p>Company:    http://www.xinglinglove.com </p>
@@ -18,7 +18,7 @@ import java.io.Serializable;
  */
 @Data
 @ApiModel(value = "校验用户唯一性Dto ")
-public class CheckRoleNameDto implements Serializable {
+public class CheckRoleDto implements Serializable {
 	
 	private static final long serialVersionUID = -4910469405441910726L;
 
@@ -33,4 +33,10 @@ public class CheckRoleNameDto implements Serializable {
 	 */
 	@ApiModelProperty(value = "角色名称")
 	private String roleName;
+
+	/**
+	 * 角色编码
+	 */
+	@ApiModelProperty(value = "角色编码")
+	private String roleCode;
 }

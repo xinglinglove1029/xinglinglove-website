@@ -93,6 +93,10 @@ public class User extends BaseEntiy implements Serializable {
 	@Transient
 	private Boolean enabled;
 
+
+	@Transient
+	private Boolean disabled;
+
 	@Transient
 	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")

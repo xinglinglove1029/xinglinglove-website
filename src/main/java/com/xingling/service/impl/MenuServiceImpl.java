@@ -6,6 +6,7 @@ import com.xingling.constants.Constants;
 import com.xingling.exception.BusinessException;
 import com.xingling.mapper.MenuMapper;
 import com.xingling.model.domain.Menu;
+import com.xingling.model.domain.RoleMenu;
 import com.xingling.model.dto.AuthUserDto;
 import com.xingling.model.vo.MenuTreeVo;
 import com.xingling.service.MenuService;
@@ -13,6 +14,7 @@ import com.xingling.service.RoleMenuService;
 import com.xingling.util.TreeUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -40,6 +42,7 @@ public class MenuServiceImpl extends BaseServiceImpl<Menu> implements MenuServic
 
 
     @Override
+    @Transactional
     public int saveMenuInfo(Menu menu, AuthUserDto authUserDto) {
         Menu querMenu = new Menu();
         querMenu.setId(menu.getPid());
@@ -53,7 +56,16 @@ public class MenuServiceImpl extends BaseServiceImpl<Menu> implements MenuServic
         menu.setCreatorId(authUserDto.getUserId());
         menu.setUpdater(authUserDto.getRealName());
         menu.setUpdaterId(authUserDto.getUserId());
-        return menuMapper.insertSelective(menu);
+        int result = menuMapper.insertSelective(menu);
+
+        Menu query = new Menu();
+        query.setMenuCode(menu.getMenuCode());
+        Menu queryMenu = menuMapper.selectOne(query);
+        RoleMenu superRoleMenu = new RoleMenu();
+        superRoleMenu.setRoleId(Constants.SUPER_MANAGER);
+        superRoleMenu.setMenuId(queryMenu.getId());
+        roleMenuService.save(superRoleMenu);
+        return result;
     }
 
     @Override

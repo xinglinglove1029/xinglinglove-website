@@ -31,8 +31,8 @@ public class RoleBindUserDto implements Serializable {
 	/**
 	 * 已经绑定的用户集合
 	 */
-	@ApiModelProperty(value = "已经绑定的用户集合")
-	private List<User> alreadyBindUserList;
+	@ApiModelProperty(value = "全部用户集合")
+	private List<User> alllUserList;
 
 	private List<String> alreadyBindUserIds;
 

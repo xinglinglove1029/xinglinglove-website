@@ -33,10 +33,10 @@
         LEFT JOIN xl_user bb ON aa.user_id = bb.id
         WHERE
             aa.role_id = #{roleId}
-        AND user_id != '1'
     </select>
     <select id="getBindRoleListByUserId" resultType="com.xingling.model.domain.Role">
         select aa.role_id as id,bb.role_name as roleName,bb.role_code as roleCode from xl_user_role aa
         JOIN xl_role bb on aa.role_id = bb.id where user_id = #{userId}
     </select>
+
 </mapper>

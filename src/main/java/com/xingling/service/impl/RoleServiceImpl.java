@@ -6,16 +6,14 @@ import com.xingling.base.BaseServiceImpl;
 import com.xingling.constants.Constants;
 import com.xingling.exception.BusinessException;
 import com.xingling.mapper.RoleMapper;
-import com.xingling.model.domain.Role;
-import com.xingling.model.domain.RoleAuthority;
-import com.xingling.model.domain.RoleMenu;
-import com.xingling.model.domain.User;
+import com.xingling.model.domain.*;
 import com.xingling.model.dto.AuthUserDto;
 import com.xingling.model.dto.ResourceDto;
 import com.xingling.model.dto.RoleBindAuthorityDto;
 import com.xingling.model.dto.RoleBindUserDto;
 import com.xingling.service.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -48,6 +46,7 @@ public class RoleServiceImpl extends BaseServiceImpl<Role> implements RoleServic
 
     @Resource
     private RoleAuthorityService roleAuthorityService;
+
 
     @Override
     public List<Role> queryListPage(Role role) {
@@ -126,18 +125,33 @@ public class RoleServiceImpl extends BaseServiceImpl<Role> implements RoleServic
     }
 
     @Override
+    @Transactional
     public int saveRoleInfo(Role role, AuthUserDto authUserDto) {
         role.setCreator(authUserDto.getRealName());
         role.setCreatorId(authUserDto.getUserId());
         role.setUpdater(authUserDto.getRealName());
         role.setUpdaterId(authUserDto.getUserId());
-        return roleMapper.insertSelective(role);
+        int result = roleMapper.insertSelective(role);
+        Role query = new Role();
+        query.setRoleCode(role.getRoleCode());
+        Role queryRole = roleMapper.selectOne(query);
+        // 新增角色默认给超级管理员绑定关系
+        UserRole superUserRole = new UserRole();
+        superUserRole.setUserId(Constants.SUPER_MANAGER);
+        superUserRole.setRoleId(queryRole.getId());
+        userRoleService.save(superUserRole);
+        return result;
     }
 
     @Override
     public RoleBindUserDto getBindUserByRoleId(String roleId, String currentUserId) {
         // 查询全部用户集合
-        List<User> allUserList = userService.selectAllExcludeSupper();
+        List<User> allUserList = userService.selectAll();
+        allUserList.forEach(f ->{
+            if(f.getId().equals(Constants.SUPER_MANAGER)){
+                f.setDisabled(true);
+            }
+        });
 
         // 查询已绑定的用户集合
         List<User> alreadyBindUserList = userRoleService.getBindUserByRoleId(roleId);
@@ -148,7 +162,7 @@ public class RoleServiceImpl extends BaseServiceImpl<Role> implements RoleServic
         List<String> alreadyBindUserIds = alreadyBindUserList.stream().map(BaseEntiy::getId).collect(Collectors.toList());
 
         RoleBindUserDto bindUserDto = new RoleBindUserDto();
-        bindUserDto.setAlreadyBindUserList(alreadyBindUserList);
+        bindUserDto.setAlllUserList(allUserList);
         bindUserDto.setNotBindUserList(notBindUserList);
         bindUserDto.setAlreadyBindUserIds(alreadyBindUserIds);
         return bindUserDto;

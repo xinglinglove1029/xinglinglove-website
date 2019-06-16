@@ -2,12 +2,13 @@ package com.xingling.controller;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.xingling.annotation.AccessLimit;
 import com.xingling.base.BaseController;
 import com.xingling.common.WrapMapper;
 import com.xingling.common.Wrapper;
 import com.xingling.model.domain.Role;
 import com.xingling.model.dto.AuthUserDto;
-import com.xingling.model.dto.CheckRoleNameDto;
+import com.xingling.model.dto.CheckRoleDto;
 import com.xingling.model.dto.RoleBindAuthorityDto;
 import com.xingling.model.dto.RoleBindUserDto;
 import com.xingling.model.vo.AuthorityTreeVo;
@@ -160,17 +161,17 @@ public class RoleController extends BaseController {
      * <p>Title:      checkRoleName. </p>
      * <p>Description 校验角色名唯一性</p>
      *
-     * @param checkRoleNameDto the check role name dto
+     * @param checkRoleDto the check role name dto
      * @return wrapper wrapper
      * @Author <a href="190332447@qq.com"/>杨文生</a>
      * @since 2018 /2/24 17:08
      */
     @PostMapping(value = "/checkRoleName")
     @ApiOperation(httpMethod = "POST", value = "校验角色名唯一性")
-    public Wrapper<Boolean> checkRoleName(@ApiParam(name = "checkRoleNameDto", value = "用户名dto") @RequestBody CheckRoleNameDto checkRoleNameDto) {
+    public Wrapper<Boolean> checkRoleName(@ApiParam(name = "checkRoleDto", value = "用户名dto") @RequestBody CheckRoleDto checkRoleDto) {
         boolean flag = false;
-        String roleId = checkRoleNameDto.getRoleId();
-        String roleName = checkRoleNameDto.getRoleName();
+        String roleId = checkRoleDto.getRoleId();
+        String roleName = checkRoleDto.getRoleName();
         Example example = new Example(Role.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("roleName", roleName);
@@ -184,9 +185,37 @@ public class RoleController extends BaseController {
         return WrapMapper.ok(flag);
     }
 
-    @RequestMapping(value = "/getBindUserByRoleId/{roleId}", method = RequestMethod.POST)
+    /**
+     * <p>Title:      checkRoleCode. </p>
+     * <p>Description 校验角色编码唯一性</p>
+     *
+     * @param checkRoleDto the check role name dto
+     * @return wrapper wrapper
+     * @Author <a href="190332447@qq.com"/>杨文生</a>
+     * @since 2018 /2/24 17:08
+     */
+    @PostMapping(value = "/checkRoleCode")
+    @ApiOperation(httpMethod = "POST", value = "校验角色编码唯一性")
+    public Wrapper<Boolean> checkRoleCode(@ApiParam(name = "checkRoleDto", value = "用户名dto") @RequestBody CheckRoleDto checkRoleDto) {
+        boolean flag = false;
+        String roleId = checkRoleDto.getRoleId();
+        String roleCode = checkRoleDto.getRoleCode();
+        Example example = new Example(Role.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("roleCode", roleCode);
+        if (StringUtils.isNotEmpty(roleId)) {
+            criteria.andNotEqualTo("id", roleId);
+        }
+        int result = roleService.selectCountByExample(example);
+        if(result > 0) {
+            flag = true;
+        }
+        return WrapMapper.ok(flag);
+    }
+
+    @RequestMapping(value = "/getBindUserByRoleId", method = RequestMethod.POST)
     @ApiOperation(httpMethod = "POST", value = "获取角色绑定用户页面数据")
-    public Wrapper<RoleBindUserDto> getBindUserByRoleId(@ApiParam(name = "roleId", value = "角色id") @PathVariable String roleId) {
+    public Wrapper<RoleBindUserDto> getBindUserByRoleId(@ApiParam(name = "roleId", value = "角色id") @RequestBody String roleId) {
         AuthUserDto authUserDto = getLoginAuthDto();
         String currentUserId = authUserDto.getUserId();
         RoleBindUserDto bindUserDto = roleService.getBindUserByRoleId(roleId, currentUserId);
@@ -234,6 +263,7 @@ public class RoleController extends BaseController {
      */
     @PostMapping(value = "/roleBindResource")
     @ApiOperation(httpMethod = "POST", value = "角色绑定资源")
+    @AccessLimit(maxCount = 1,seconds = 1)
     public Wrapper<Boolean> roleBindResource(@RequestBody RoleBindAuthorityDto roleBindAuthority) {
         AuthUserDto authUserDto = getLoginAuthDto();
         roleService.roleBindResource(roleBindAuthority,authUserDto);
