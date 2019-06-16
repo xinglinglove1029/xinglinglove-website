@@ -183,13 +183,12 @@ public class MenuController extends BaseController {
      * <p>Title:     select2MenuList. </p>
      * <p>Description 下来列表查询所有菜单</p>
      *
-     * @param
-     * @return
+     * @return Wrapper
      * @Author        <a href="yangwensheng@meicai.cn"/>杨文生</a>
      * @since     2018/5/14 10:00
      */
     @PostMapping(value = "/select2MenuList")
-    @ApiOperation(httpMethod = "POST", value = "分页查询权限列表")
+    @ApiOperation(httpMethod = "POST", value = "下来列表查询所有菜单")
     public Wrapper<List<Menu>> select2MenuList() {
         List<Menu> menuList = menuService.selectAll();
         return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, menuList);
