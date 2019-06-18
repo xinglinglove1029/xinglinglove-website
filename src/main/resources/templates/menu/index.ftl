@@ -95,8 +95,8 @@
         <!--修改模态框-->
         <el-dialog title="修改菜单" :visible.sync="editDialogFormVisible" @close="resetForm('ruleForm2')">
             <el-form :rules="editRules" ref="ruleForm2" :model="ruleForm2" label-position="left" label-width="80px" style='width: 400px; margin-left:50px;'>
-                <el-form-item label="父菜单" prop="editParentName">
-                    <el-input v-model.trim="editParentName" disabled></el-input>
+                <el-form-item label="父菜单" prop="pid">
+                    <treeselect :options="treeData"  v-model="ruleForm2.pid" placeholder="请选择菜单" :normalizer="normalizer"/>
                 </el-form-item>
                 <el-form-item label="菜单名称" prop="menuName">
                     <el-input v-model.trim="ruleForm2.menuName"></el-input>
@@ -598,6 +598,7 @@
             'Content-Type': 'application/json; charset=UTF-8'
         }
     });
+    Vue.component('treeselect', VueTreeselect.Treeselect);
     new Vue({
         el: '#app',
         data() {
@@ -707,6 +708,9 @@
                     url: [
                         { required: true, message: '菜单URL不能为空', trigger: 'blur' },
                         { min: 2, max: 30, message: '请正确填写菜单URL,支持2-30个字符', trigger: 'blur' }
+                    ],
+                    pid: [
+                        { required: true, message: '父菜单不能为空', trigger: 'blur' }
                     ]
                 }
             }
@@ -729,6 +733,27 @@
             this.fetchData();
         },
         methods: {
+            normalizer(node) {
+                return {
+                    id: node.id,
+                    label: node.menuName,
+                    children: node.children,
+                }
+            },
+            getTreeData(data){
+                // 循环遍历json数据
+                for(var i=0;i<data.length;i++){
+
+                    if(data[i].children.length<1){
+                        // children若为空数组，则将children设为undefined
+                        data[i].children=undefined;
+                    }else {
+                        // children若不为空数组，则继续 递归调用 本方法
+                        this.getTreeData(data[i].children);
+                    }
+                }
+                return data;
+            },
             selectIcon(event){
                 let _this = this;
                 _this.ruleForm1.icon = event.target.className;
@@ -826,6 +851,7 @@
                             if(res.data.code === 200){
                                 _this.addDialogFormVisible = false;
                                 _this.resetForm(formName);
+                                _this.fetchData();
                                 _this.listLoading = false;
                                 _this.$notify({
                                     title: '成功',

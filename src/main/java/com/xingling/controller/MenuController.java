@@ -3,6 +3,7 @@ package com.xingling.controller;
 import com.xingling.base.BaseController;
 import com.xingling.common.WrapMapper;
 import com.xingling.common.Wrapper;
+import com.xingling.constants.Constants;
 import com.xingling.model.domain.Menu;
 import com.xingling.model.dto.AuthUserDto;
 import com.xingling.model.dto.CheckMenuCodeDto;
@@ -189,8 +190,8 @@ public class MenuController extends BaseController {
      */
     @PostMapping(value = "/select2MenuList")
     @ApiOperation(httpMethod = "POST", value = "下来列表查询所有菜单")
-    public Wrapper<List<Menu>> select2MenuList() {
-        List<Menu> menuList = menuService.selectAll();
-        return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, menuList);
+    public Wrapper<List<MenuTreeVo>> select2MenuList() {
+        List<MenuTreeVo> menuTreeVos = menuService.getMenuTree(Constants.ROOT_PARENTID);
+        return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE, menuTreeVos);
     }
 }

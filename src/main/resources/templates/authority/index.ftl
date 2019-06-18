@@ -102,17 +102,10 @@
             </el-pagination>
         </div>
         <!--新增模态框-->
-        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+        <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" @close="resetForm('ruleForm')">
             <el-form :rules="rules" ref="ruleForm" :model="ruleForm" label-position="left" label-width="80px" style='width: 400px; margin-left:50px;'>
                 <el-form-item label="菜单" prop="menuId">
-                    <el-select v-model="ruleForm.menuId" filterable clearable  placeholder="请选择">
-                        <el-option
-                                v-for="item in menuList"
-                                :key="item.id"
-                                :label="item.menuName"
-                                :value="item.id">
-                        </el-option>
-                    </el-select>
+                    <treeselect :options="treeData"  v-model="ruleForm.menuId" :disabled="disabledEdit" placeholder="请选择菜单" :normalizer="normalizer"/>
                 </el-form-item>
                 <el-form-item label="权限名称" prop="authorityName">
                     <el-input v-model.trim="ruleForm.authorityName"></el-input>
@@ -129,7 +122,7 @@
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogFormVisible = false">取 消</el-button>
+                <el-button @click="resetForm('ruleForm')" >取 消</el-button>
                 <el-button v-if="dialogStatus=='create'" type="primary" @click="saveAuthorityData">确 定</el-button>
                 <el-button v-else type="primary" @click="updateAuthority">确 定</el-button>
             </div>
@@ -145,6 +138,7 @@
             'Content-Type': 'application/json; charset=UTF-8'
         }
     });
+    Vue.component('treeselect', VueTreeselect.Treeselect);
     new Vue({
         el: '#app',
         data() {
@@ -184,6 +178,8 @@
                 }
             };
             return {
+                disabledEdit: false,
+                treeData: [],
                 tableData: null,
                 listLoading: true,
                 total: 0,
@@ -256,6 +252,27 @@
             this.getMenuList();
         },
         methods: {
+            normalizer(node) {
+                return {
+                    id: node.id,
+                    label: node.menuName,
+                    children: node.children,
+                }
+            },
+            getTreeData(data){
+                // 循环遍历json数据
+                for(var i=0;i<data.length;i++){
+
+                    if(data[i].children.length<1){
+                        // children若为空数组，则将children设为undefined
+                        data[i].children=undefined;
+                    }else {
+                        // children若不为空数组，则继续 递归调用 本方法
+                        this.getTreeData(data[i].children);
+                    }
+                }
+                return data;
+            },
             fetchData() {
                 let _this = this;
                 _this.listLoading = true;
@@ -296,7 +313,7 @@
                     url: '/menu/select2MenuList',
                 }).then((res) => {
                     if(res.data.code === 200){
-                        _this.menuList = res.data.result;
+                        _this.treeData = _this.getTreeData(res.data.result);
                         _this.listLoading = false;
                     }else{
                         _this.$message({
@@ -361,6 +378,7 @@
                 _this.ruleForm = Object.assign({}, row);
                 _this.dialogStatus = 'update';
                 _this.dialogFormVisible = true;
+                _this.disabledEdit = true;
                 _this.$nextTick(() => {
                     _this.$refs['ruleForm'].clearValidate();
                 })
@@ -376,6 +394,7 @@
                         }).then((res) => {
                             if(res.data.code === 200){
                                 _this.dialogFormVisible = false;
+                                _this.disabledEdit = false;
                                 _this.resetAuthorityData();
                                 _this.fetchData();
                                 _this.$message({
@@ -437,6 +456,8 @@
                 let _this = this;
                 _this.$refs[form].resetFields();
                 _this.fetchData();
+                _this.disabledEdit = false;
+                _this.dialogFormVisible = false;
             },
             enable(row) {
                 let _this = this;

@@ -5,3 +5,4 @@
 <link rel="stylesheet" href="/static/element/index.css"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/v-charts/lib/style.min.css">
 <link rel="stylesheet" href="/static/css/font-awesome.min.css">
+<link rel="stylesheet" href="/static/element/vue-treeselect.min.css">
