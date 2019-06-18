@@ -96,7 +96,7 @@
         <el-dialog title="修改菜单" :visible.sync="editDialogFormVisible" @close="resetForm('ruleForm2')">
             <el-form :rules="editRules" ref="ruleForm2" :model="ruleForm2" label-position="left" label-width="80px" style='width: 400px; margin-left:50px;'>
                 <el-form-item label="父菜单" prop="pid">
-                    <treeselect :options="treeData"  v-model="ruleForm2.pid" placeholder="请选择菜单" :normalizer="normalizer"/>
+                    <treeselect :options="treeSelectData"  v-model="ruleForm2.pid" placeholder="请选择菜单" :normalizer="normalizer"/>
                 </el-form-item>
                 <el-form-item label="菜单名称" prop="menuName">
                     <el-input v-model.trim="ruleForm2.menuName"></el-input>
@@ -640,6 +640,7 @@
             return {
                 filterText: '',
                 treeData: [],
+                treeSelectData: [],
                 defaultProps: {
                     children: 'children',
                     label: 'menuName'
@@ -787,6 +788,7 @@
                 }).then((res) => {
                     if(res.data.code === 200){
                         _this.treeData = res.data.result;
+                        _this.treeSelectData= _this.getTreeData(res.data.result);
                         _this.listLoading = false;
                     }else{
                         _this.$message({
