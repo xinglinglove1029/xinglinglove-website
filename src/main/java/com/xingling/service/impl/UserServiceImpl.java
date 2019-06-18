@@ -5,6 +5,7 @@ import com.xingling.constants.Constants;
 import com.xingling.enums.UserStatusEnums;
 import com.xingling.exception.BusinessException;
 import com.xingling.mapper.UserMapper;
+import com.xingling.model.domain.Role;
 import com.xingling.model.domain.User;
 import com.xingling.model.domain.UserDept;
 import com.xingling.model.domain.UserRole;
@@ -104,6 +105,11 @@ public class UserServiceImpl extends BaseServiceImpl<User> implements UserServic
 		User user = userMapper.selectOne(queryUser);
 		if(Objects.isNull(user)) {
 			throw new BusinessException("用户信息不存在");
+		}
+		// 判断用户是否和角色还存在绑定关系
+		List<Role> bindRoleListByUserId = userRoleService.getBindRoleListByUserId(id);
+		if(bindRoleListByUserId.size() > 0){
+			throw new BusinessException("该用户还与角色存在绑定关系，不能删除");
 		}
 		queryUser.setDel(Constants.DELETE_YES);
 		queryUser.setUpdater(authUserDto.getRealName());

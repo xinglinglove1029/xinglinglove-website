@@ -13,4 +13,18 @@
     <delete id="batchDeleteByRoleId">
       DELETE FROM xl_role_authority where role_id = #{roleId}
     </delete>
+
+    <select id="getAuthorityByRoleIds" resultType="com.xingling.model.domain.Authority">
+     select <include refid="Base_Column_List"/> from  xl_role_authority aa JOIN xl_authority bb on aa.authority_id = bb.id AND bb.del = 0 and bb.status =1
+      where  1=1
+      <if test="roleIds != null and roleIds.size() > 0 ">
+        AND aa.role_id IN
+        <foreach collection="roleIds" item="item" index="index" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+      </if>
+    </select>
+    <select id="selectRoleAuthorityByRoleId" resultType="com.xingling.model.domain.RoleAuthority">
+        select <include refid="Base_Column_List"/> from  xl_role_authority aa JOIN xl_authority bb on aa.authority_id = bb.id AND bb.del = 0  and bb.status =1 and  aa.role_id = #{roleId}
+    </select>
 </mapper>

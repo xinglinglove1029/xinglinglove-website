@@ -75,4 +75,15 @@ public interface UserRoleService extends BaseService<UserRole> {
      * @since     2019/4/11 14:55
      */
     void bindRole(UserBindRoleDto userBindRoleDto);
+
+    /**
+     * <p>Title:      batchDeleteByRoleId. </p>
+     * <p>Description 根据角色编码删除用户关系</p>
+     *
+     * @param      roleId   String
+     * @return        void
+     * @Author        <a href="yangwensheng@meicai.cn"/>杨文生</a>
+     * @since     2019/6/17 18:12
+     */
+    void batchDeleteByRoleId(String roleId);
 }

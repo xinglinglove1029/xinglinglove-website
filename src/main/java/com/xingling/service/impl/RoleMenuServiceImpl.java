@@ -33,4 +33,9 @@ public class RoleMenuServiceImpl extends BaseServiceImpl<RoleMenu> implements Ro
     public List<Menu> getMenuByRoleIds(List<String> roleIds) {
         return roleMenuMapper.getMenuByRoleIds(roleIds);
     }
+
+    @Override
+    public List<RoleMenu> selectRoleMenuByRoleId(String roleId) {
+        return roleMenuMapper.selectRoleMenuByRoleId(roleId);
+    }
 }

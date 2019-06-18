@@ -11,14 +11,13 @@ import com.xingling.model.dto.AuthUserDto;
 import com.xingling.model.dto.ResourceDto;
 import com.xingling.model.dto.RoleBindAuthorityDto;
 import com.xingling.model.dto.RoleBindUserDto;
+import com.xingling.model.vo.RoleBindUserVo;
 import com.xingling.service.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -61,6 +60,18 @@ public class RoleServiceImpl extends BaseServiceImpl<Role> implements RoleServic
         Role role = roleMapper.selectOne(queryRole);
         if (Objects.isNull(role)) {
             throw new BusinessException("角色信息不存在");
+        }
+        List<Menu> menuByRoleIds = roleMenuService.getMenuByRoleIds(Collections.singletonList(id));
+        if(menuByRoleIds.size() > 0){
+            throw new BusinessException("该角色下还绑定的菜单，不能删除");
+        }
+        List<Authority>  authorityList = roleAuthorityService.getAuthorityByRoleIds(Collections.singletonList(id));
+        if(authorityList.size() > 0){
+            throw new BusinessException("该角色下还绑定的权限，不能删除");
+        }
+        List<User> bindUserByRoleId = userRoleService.getBindUserByRoleId(id);
+        if(bindUserByRoleId.size() >1){
+            throw new BusinessException("该角色下还存在绑定的用户，不能删除");
         }
         queryRole.setDel(Constants.DELETE_YES);
         queryRole.setUpdater(authUserDto.getRealName());
@@ -144,7 +155,7 @@ public class RoleServiceImpl extends BaseServiceImpl<Role> implements RoleServic
     }
 
     @Override
-    public RoleBindUserDto getBindUserByRoleId(String roleId, String currentUserId) {
+    public RoleBindUserVo getBindUserByRoleId(String roleId, String currentUserId) {
         // 查询全部用户集合
         List<User> allUserList = userService.selectAll();
         allUserList.forEach(f ->{
@@ -161,7 +172,7 @@ public class RoleServiceImpl extends BaseServiceImpl<Role> implements RoleServic
 
         List<String> alreadyBindUserIds = alreadyBindUserList.stream().map(BaseEntiy::getId).collect(Collectors.toList());
 
-        RoleBindUserDto bindUserDto = new RoleBindUserDto();
+        RoleBindUserVo bindUserDto = new RoleBindUserVo();
         bindUserDto.setAlllUserList(allUserList);
         bindUserDto.setNotBindUserList(notBindUserList);
         bindUserDto.setAlreadyBindUserIds(alreadyBindUserIds);
@@ -169,6 +180,7 @@ public class RoleServiceImpl extends BaseServiceImpl<Role> implements RoleServic
     }
 
     @Override
+    @Transactional
     public void roleBindResource(RoleBindAuthorityDto roleBindAuthority, AuthUserDto authUserDto) {
         // 根据角色id查询该角色
         Role queryRole = new Role();
@@ -179,31 +191,27 @@ public class RoleServiceImpl extends BaseServiceImpl<Role> implements RoleServic
             throw new BusinessException("角色信息不存在");
         }
 
-        if(roleBindAuthority.getResourceInfoList().size() == 0){
-            throw  new BusinessException("选择的权限不能为空");
-        }
-
         // 删除该角色所绑定的菜单和权限关系
         roleMenuService.batchDeleteByRoleId(roleBindAuthority.getRoleId());
         roleAuthorityService.batchDeleteByRoleId(roleBindAuthority.getRoleId());
 
+        if(roleBindAuthority.getResourceInfoList().size() > 0){
+            List<ResourceDto> resourceInfoList = roleBindAuthority.getResourceInfoList();
+            // 过滤出菜单
+            List<ResourceDto> menuResourceInfo = resourceInfoList.stream().filter(f -> "1".equals(f.getType())).collect(Collectors.toList());
+            List<String> menuIdList = menuResourceInfo.stream().map(ResourceDto::getResourceId).collect(Collectors.toList());
 
-        List<ResourceDto> resourceInfoList = roleBindAuthority.getResourceInfoList();
-        // 过滤出菜单
-        List<ResourceDto> menuResourceInfo = resourceInfoList.stream().filter(f -> "1".equals(f.getType())).collect(Collectors.toList());
-        List<String> menuIdList = menuResourceInfo.stream().map(ResourceDto::getResourceId).collect(Collectors.toList());
+            // 过滤出按钮权限
+            List<ResourceDto> authorityResourceInfo = resourceInfoList.stream().filter(f -> "2".equals(f.getType())).collect(Collectors.toList());
+            List<String> authorityIdList = authorityResourceInfo.stream().map(ResourceDto::getResourceId).collect(Collectors.toList());
 
-        // 过滤出按钮权限
-        List<ResourceDto> authorityResourceInfo = resourceInfoList.stream().filter(f -> "2".equals(f.getType())).collect(Collectors.toList());
-        List<String> authorityIdList = authorityResourceInfo.stream().map(ResourceDto::getResourceId).collect(Collectors.toList());
+            List<RoleMenu> roleMenuList = this.buildMenuRoleInfo(menuIdList, roleBindAuthority.getRoleId());
+            List<RoleAuthority> roleAuthorities = this.buildAuthorityRoleInfo(authorityIdList, roleBindAuthority.getRoleId());
 
-        List<RoleMenu> roleMenuList = this.buildMenuRoleInfo(menuIdList, roleBindAuthority.getRoleId());
-        List<RoleAuthority> roleAuthorities = this.buildAuthorityRoleInfo(authorityIdList, roleBindAuthority.getRoleId());
-
-        // 保存菜单权限与角色的关系
-        roleMenuService.batchSave(roleMenuList);
-        roleAuthorityService.batchSave(roleAuthorities);
-
+            // 保存菜单权限与角色的关系
+            roleMenuService.batchSave(roleMenuList);
+            roleAuthorityService.batchSave(roleAuthorities);
+        }
     }
 
 
@@ -234,19 +242,47 @@ public class RoleServiceImpl extends BaseServiceImpl<Role> implements RoleServic
     @Override
     public List<String> getBindResourceInfoByRoleId(String roleId) {
         List<String> resourceIdList = Lists.newArrayList();
-        RoleMenu roleMenu = new RoleMenu();
-        roleMenu.setRoleId(roleId);
-        List<RoleMenu> roleMenuList = roleMenuService.select(roleMenu);
+        List<RoleMenu> roleMenuList = roleMenuService.selectRoleMenuByRoleId(roleId);
         List<String> menuIdList = roleMenuList.stream().map(RoleMenu::getMenuId).collect(Collectors.toList());
 
-        RoleAuthority roleAuthority = new RoleAuthority();
-        roleAuthority.setRoleId(roleId);
-        List<RoleAuthority> roleAuthorityList = roleAuthorityService.select(roleAuthority);
+        List<RoleAuthority> roleAuthorityList = roleAuthorityService.selectRoleAuthorityByRoleId(roleId);
         List<String> authorityIdList = roleAuthorityList.stream().map(RoleAuthority::getAuthorityId).collect(Collectors.toList());
 
         resourceIdList.addAll(menuIdList);
         resourceIdList.addAll(authorityIdList);
         return resourceIdList;
+    }
+
+    @Override
+    @Transactional
+    public void roleBindUser(RoleBindUserDto roleBindUserDto, AuthUserDto authUserDto) {
+        // 根据角色id查询该角色
+        Role queryRole = new Role();
+        queryRole.setId(roleBindUserDto.getRoleId());
+        queryRole.setDel(Constants.DELETE_NO);
+        Role rl = roleMapper.selectOne(queryRole);
+        if (Objects.isNull(rl)) {
+            throw new BusinessException("角色信息不存在");
+        }
+
+        // 删除该角色所绑定的用户
+        userRoleService.batchDeleteByRoleId(roleBindUserDto.getRoleId());
+        if(roleBindUserDto.getUserIds().size()>0){
+            if(roleBindUserDto.getUserIds().size() != 1){
+                List<UserRole> userRoleList = Lists.newArrayList();
+                UserRole userRole = null;
+                for (String userId : roleBindUserDto.getUserIds()) {
+                    if(Constants.SUPER_MANAGER.equals(userId)){
+                        continue;
+                    }
+                    userRole = new UserRole();
+                    userRole.setUserId(userId);
+                    userRole.setRoleId(roleBindUserDto.getRoleId());
+                    userRoleList.add(userRole);
+                }
+                userRoleService.batchSave(userRoleList);
+            }
+        }
     }
 
 }

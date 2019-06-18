@@ -18,7 +18,36 @@ import java.util.List;
  */
 public interface RoleMenuService extends BaseService<RoleMenu> {
 
+    /**
+     * <p>Title:      batchDeleteByRoleId. </p>
+     * <p>Description 根据角色id删除菜单信息</p>
+     *
+     * @param         roleId String
+     * @return        int
+     * @Author        <a href="yangwensheng@meicai.cn"/>杨文生</a>
+     * @since     2019/6/18 12:03
+     */
     int batchDeleteByRoleId(String roleId);
 
+    /**
+     * <p>Title:      selectRoleMenuByRoleId. </p>
+     * <p>Description 根据角色id查询绑定的菜单信息</p>
+     *
+     * @param         roleIds List<String>
+     * @return        List<Menu>
+     * @Author        <a href="yangwensheng@meicai.cn"/>杨文生</a>
+     * @since     2019/6/18 12:03
+     */
     List<Menu> getMenuByRoleIds(List<String> roleIds);
+
+    /**
+     * <p>Title:      selectRoleMenuByRoleId. </p>
+     * <p>Description 根据角色id查询绑定的菜单信息</p>
+     *
+     * @param         roleId String
+     * @return        List<RoleMenu>
+     * @Author        <a href="yangwensheng@meicai.cn"/>杨文生</a>
+     * @since     2019/6/18 12:03
+     */
+    List<RoleMenu> selectRoleMenuByRoleId(String roleId);
 }

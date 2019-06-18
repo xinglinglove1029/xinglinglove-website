@@ -6,6 +6,7 @@ import com.xingling.model.domain.Role;
 import com.xingling.model.dto.AuthUserDto;
 import com.xingling.model.dto.RoleBindAuthorityDto;
 import com.xingling.model.dto.RoleBindUserDto;
+import com.xingling.model.vo.RoleBindUserVo;
 
 import java.util.List;
 
@@ -101,7 +102,7 @@ public interface RoleService extends BaseService<Role> {
      * @Author <a href="yangwensheng@meicai.cn"/>杨文生</a>
      * @since 2018 /4/28 14:21
      */
-    RoleBindUserDto getBindUserByRoleId(String roleId, String currentUserId);
+    RoleBindUserVo getBindUserByRoleId(String roleId, String currentUserId);
 
     /**
      * <p>Title:      roleBindResource. </p>
@@ -116,4 +117,14 @@ public interface RoleService extends BaseService<Role> {
 
     List<String> getBindResourceInfoByRoleId(String roleId);
 
+    /**
+     * <p>Title:      roleBindUser. </p>
+     * <p>Description 角色绑定用户</p>
+     *
+     * @param        roleBindUserDto  RoleBindUserDto
+     * @return        void
+     * @Author        <a href="yangwensheng@meicai.cn"/>杨文生</a>
+     * @since     2019/6/17 18:05
+     */
+    void roleBindUser(RoleBindUserDto roleBindUserDto, AuthUserDto authUserDto);
 }

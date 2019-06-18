@@ -124,12 +124,12 @@
             </div>
         </el-dialog>
         <!--角色绑定用户模态框-->
-        <el-dialog :visible.sync="bindUserDialogVisible" @click="bindUserDialogVisible = false">
+        <el-dialog :visible.sync="bindUserDialogVisible" @click="bindUserDialogVisible = false" width="55%">
             <template>
-                <el-transfer
+                <el-transfer style="margin-left: 20px;"
                         filterable
                         :filter-method="filterMethod"
-                        filter-placeholder="请输入城市拼音"
+                        filter-placeholder="请输入用户名"
                         v-model="alreadyBindUser"
                         :props="{key: 'id',label: 'realName',disabled: 'disabled'}"
                         @change="handleChange"
@@ -137,14 +137,19 @@
                         :button-texts="['到左边', '到右边']"
                         :data="allUser">
                     <span slot-scope="{ option }">{{ option.realName }} - {{ option.cellPhone }}</span>
+
                 </el-transfer>
             </template>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="bindUserDialogVisible = false">取 消</el-button>
+                <el-button type="primary" :disabled="btnDisabled"  @click="roleBindUser()">保存</el-button>
+            </div>
         </el-dialog>
         <!--角色绑定权限模态框-->
         <el-dialog :visible.sync="bindAuthorityDialogVisible" @click="bindAuthorityDialogVisible = false">
             <div class="tree-container" >
                 <el-row :gutter="24">
-                    <el-col :span="6" :xs="24" :sm="24" :md="6" :lg="6" style="margin-bottom: 20px;">
+                    <el-col :span="6" :xs="24" :sm="24" :md="12" :lg="6" style="margin-bottom: 20px;">
                         <el-button type="primary" @click="checkedAll" size="mini">全选</el-button>
                         <el-button type="primary" @click="noCheckedAll" size="mini">全不选</el-button>
                     </el-col>
@@ -275,6 +280,8 @@
                         value: '禁用'
                     }
                 ],
+                currentSelectedRoleId: '',
+                bindUserIds: [],
                 selectedRoleId: '',
                 checkedKeys: [],
                 checkedAllKeys: [],
@@ -568,6 +575,7 @@
             },
             bindUser(row) {
                 let _this = this;
+                _this.currentSelectedRoleId = row.id;
                 console.log(row);
                 _this.bindUserDialogVisible = true;
                 _this.listLoading = true;
@@ -579,6 +587,7 @@
                     if(res.data.code === 200){
                         _this.allUser = res.data.result.alllUserList;
                         _this.alreadyBindUser = res.data.result.alreadyBindUserIds;
+                        _this.bindUserIds = res.data.result.alreadyBindUserIds;
                         _this.listLoading = false;
                     }else{
                         _this.$message({
@@ -688,7 +697,9 @@
                 });
             },
             handleChange(value, direction, movedKeys) {
+                let _this = this;
                 console.log(value, direction, movedKeys);
+                _this.bindUserIds = value;
             },
             checkedAll(){
                 let _this = this;
@@ -698,6 +709,35 @@
                 let _this = this;
                 _this.$refs.authorityTree.setCheckedKeys([]);
                 _this.checkedKeys = [];
+            },
+            roleBindUser(){
+                let _this = this;
+                let param = {};
+                param.roleId = _this.currentSelectedRoleId;
+                param.userIds = _this.bindUserIds;
+                _this.$http({
+                    method: 'POST',
+                    url: '/role/roleBindUser',
+                    data: param
+                }).then((res) => {
+                    if(res.data.code === 200){
+                        _this.bindUserDialogVisible = false;
+                        _this.btnDisabled = false;
+                        _this.currentSelectedRoleId ='';
+                        _this.$message({
+                            type: 'success',
+                            message: '绑定成功!'
+                        })
+                    }else{
+                        _this.btnDisabled = false;
+                        _this.$message({
+                            type: 'warning',
+                            message: res.data.message
+                        })
+                    }
+                }).catch((err) => {
+                    console.log(err);
+                });
             }
         }
     });

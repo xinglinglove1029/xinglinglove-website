@@ -338,7 +338,7 @@
                 _this.$http({
                     method: 'POST',
                     url: '/user/listPage',
-                    data: _this.user
+                    data: _this.listQuery
                 }).then((res) => {
                     if(res.data.code === 200){
                         _this.tableData = res.data.result.list;

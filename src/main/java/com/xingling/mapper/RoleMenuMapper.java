@@ -16,4 +16,6 @@ public interface RoleMenuMapper extends MyMapper<RoleMenu> {
     int batchDeleteByRoleId(String roleId);
 
     List<Menu> getMenuByRoleIds(@Param("roleIds") List<String> roleIds);
+
+    List<RoleMenu> selectRoleMenuByRoleId(String roleId);
 }

@@ -2,11 +2,13 @@ package com.xingling.service.impl;
 
 import com.xingling.base.BaseServiceImpl;
 import com.xingling.mapper.RoleAuthorityMapper;
+import com.xingling.model.domain.Authority;
 import com.xingling.model.domain.RoleAuthority;
 import com.xingling.service.RoleAuthorityService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * <p>Title:	  spring-cloud-koala <br/> </p>
@@ -25,5 +27,15 @@ public class RoleAuthorityServiceImpl extends BaseServiceImpl<RoleAuthority> imp
     @Override
     public int batchDeleteByRoleId(String roleId) {
         return roleAuthorityMapper.batchDeleteByRoleId(roleId);
+    }
+
+    @Override
+    public List<Authority> getAuthorityByRoleIds(List<String> roleIds) {
+        return roleAuthorityMapper.getAuthorityByRoleIds(roleIds);
+    }
+
+    @Override
+    public List<RoleAuthority> selectRoleAuthorityByRoleId(String roleId) {
+        return roleAuthorityMapper.selectRoleAuthorityByRoleId(roleId);
     }
 }

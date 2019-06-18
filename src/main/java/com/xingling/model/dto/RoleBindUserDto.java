@@ -1,6 +1,5 @@
 package com.xingling.model.dto;
 
-import com.xingling.model.domain.User;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -10,31 +9,28 @@ import java.util.List;
 
 /**
  * <p>Title:      RoleBindUserDto. </p>
- * <p>Description TODO </p>
+ * <p>Description 角色绑定用户 </p>
  * <p>Copyright: Copyright (c) 2016</p>
- * <p>Company:    http://www.xinglinglove.com </p>
+ * <p>Company:    北京云杉世界信息技术有限公司 </p>
  *
  * @author         <a href="yangwensheng@meicai.cn"/>杨文生</a>
- * @since      2018/4/28 14:15
+ * @since      2019/4/10 20:08
  */
 @Data
 @ApiModel(value = "角色绑定用户Dto")
 public class RoleBindUserDto implements Serializable {
 
-	private static final long serialVersionUID = 6518810380878732988L;
+	private static final long serialVersionUID = 6295607363243681934L;
 	/**
-	 * 未绑定的用户集合
+	 * 用户集合
 	 */
-	@ApiModelProperty(value = "未绑定的用户集合")
-	private List<User> notBindUserList;
+	@ApiModelProperty(value = "用户集合")
+	private List<String> userIds;
 
 	/**
-	 * 已经绑定的用户集合
+	 * 角色id
 	 */
-	@ApiModelProperty(value = "全部用户集合")
-	private List<User> alllUserList;
-
-	private List<String> alreadyBindUserIds;
-
+	@ApiModelProperty(value = "角色id")
+	private String roleId;
 
 }

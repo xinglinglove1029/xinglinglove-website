@@ -84,6 +84,11 @@ public class UserRoleServiceImpl extends BaseServiceImpl<UserRole> implements Us
         userRoleMapper.insertList(userRoles);
     }
 
+    @Override
+    public void batchDeleteByRoleId(String roleId) {
+        userRoleMapper.batchDeleteByRoleId(roleId);
+    }
+
     private List<UserRole> bulidUserRoleInfo(UserBindRoleDto userBindRoleDto){
         List<UserRole>  list = Lists.newArrayList();
         UserRole userRole = null;

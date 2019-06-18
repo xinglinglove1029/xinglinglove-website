@@ -12,9 +12,15 @@
   <sql id="Base_Column_List" >
     role_id, user_id
   </sql>
+
     <delete id="deleteByUserId">
         DELETE FROM xl_user_role where user_id = #{userId}
     </delete>
+
+    <delete id="batchDeleteByRoleId">
+        DELETE FROM xl_user_role where  role_id = #{roleId} and user_id != '1'
+    </delete>
+
     <select id="queryOwnRoles" resultType="com.xingling.model.dto.RoleDto">
       SELECT
         DISTINCT

@@ -6,6 +6,7 @@ import com.xingling.model.domain.User;
 import com.xingling.model.domain.UserRole;
 import com.xingling.model.dto.RoleDto;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -59,4 +60,15 @@ public interface UserRoleMapper extends MyMapper<UserRole> {
      * @since     2019/4/11 17:06
      */
     int deleteByUserId(String userId);
+
+    /**
+     * <p>Title:      batchDeleteByRoleId. </p>
+     * <p>Description 根据角色id删除用户，并且排除超级管理员</p>
+     *
+     * @param      roleId   String
+     * @return
+     * @Author        <a href="yangwensheng@meicai.cn"/>杨文生</a>
+     * @since     2019/6/18 10:13
+     */
+    int batchDeleteByRoleId(@Param("roleId") String roleId);
 }

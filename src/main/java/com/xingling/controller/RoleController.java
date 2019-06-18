@@ -11,6 +11,7 @@ import com.xingling.model.dto.AuthUserDto;
 import com.xingling.model.dto.CheckRoleDto;
 import com.xingling.model.dto.RoleBindAuthorityDto;
 import com.xingling.model.dto.RoleBindUserDto;
+import com.xingling.model.vo.RoleBindUserVo;
 import com.xingling.model.vo.AuthorityTreeVo;
 import com.xingling.service.AuthorityService;
 import com.xingling.service.RoleService;
@@ -215,10 +216,10 @@ public class RoleController extends BaseController {
 
     @RequestMapping(value = "/getBindUserByRoleId", method = RequestMethod.POST)
     @ApiOperation(httpMethod = "POST", value = "获取角色绑定用户页面数据")
-    public Wrapper<RoleBindUserDto> getBindUserByRoleId(@ApiParam(name = "roleId", value = "角色id") @RequestBody String roleId) {
+    public Wrapper<RoleBindUserVo> getBindUserByRoleId(@ApiParam(name = "roleId", value = "角色id") @RequestBody String roleId) {
         AuthUserDto authUserDto = getLoginAuthDto();
         String currentUserId = authUserDto.getUserId();
-        RoleBindUserDto bindUserDto = roleService.getBindUserByRoleId(roleId, currentUserId);
+        RoleBindUserVo bindUserDto = roleService.getBindUserByRoleId(roleId, currentUserId);
         return WrapMapper.ok(bindUserDto);
     }
 
@@ -284,6 +285,24 @@ public class RoleController extends BaseController {
     public Wrapper<List<String>> getBindResourceInfoByRoleId(@RequestBody String roleId) {
         List<String> resourceId = roleService.getBindResourceInfoByRoleId(roleId);
         return WrapMapper.ok(resourceId);
+    }
+
+    /**
+     * <p>Title:      roleBindUser. </p>
+     * <p>Description 角色绑定用户</p>
+     *
+     * @param        roleBindUserDto  RoleBindUserDto
+     * @return
+     * @Author        <a href="yangwensheng@meicai.cn"/>杨文生</a>
+     * @since     2019/4/10 20:18
+     */
+    @PostMapping(value = "/roleBindUser")
+    @ApiOperation(httpMethod = "POST", value = "角色绑定资源")
+    @AccessLimit(maxCount = 1,seconds = 1)
+    public Wrapper<Boolean> roleBindUser(@RequestBody RoleBindUserDto roleBindUserDto) {
+        AuthUserDto authUserDto = getLoginAuthDto();
+        roleService.roleBindUser(roleBindUserDto,authUserDto);
+        return WrapMapper.wrap(Wrapper.SUCCESS_CODE, Wrapper.SUCCESS_MESSAGE);
     }
 
 }
